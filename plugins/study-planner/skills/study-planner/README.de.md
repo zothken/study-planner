@@ -52,12 +52,12 @@ Wähle **einen** der Wege. Weg A ist der bequemste, weil du Updates automatisch 
 
 ### B — Als Plugin-Datei
 
-1. Lade [`dist/study-planner.plugin`](../../../../dist/study-planner.plugin) aus diesem Repository herunter.
+1. Lade [`study-planner.plugin`](https://github.com/zothken/study-planner/releases/latest/download/study-planner.plugin) aus dem neuesten Release herunter.
 2. **Customize → Plugins** → Upload-Option → Datei auswählen.
 
 ### C — Nur den Skill hochladen
 
-1. Lade [`dist/study-planner-skill.zip`](../../../../dist/study-planner-skill.zip) herunter (nicht entpacken).
+1. Lade [`study-planner-skill.zip`](https://github.com/zothken/study-planner/releases/latest/download/study-planner-skill.zip) herunter (nicht entpacken).
 2. **Customize → Skills** → **„+“** → **„+ Create skill“** → **„Upload a skill“** → ZIP auswählen.
 3. Den Skill in der Liste einschalten.
 

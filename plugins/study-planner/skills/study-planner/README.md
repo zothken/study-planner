@@ -49,12 +49,12 @@ Pick **one** route. Route A is the most convenient because you get updates autom
 
 ### B — Plugin file
 
-1. Download [`dist/study-planner.plugin`](../../../../dist/study-planner.plugin) from this repository.
+1. Download [`study-planner.plugin`](https://github.com/zothken/study-planner/releases/latest/download/study-planner.plugin) from the latest release.
 2. **Customize → Plugins** → upload option → pick the file.
 
 ### C — Skill only
 
-1. Download [`dist/study-planner-skill.zip`](../../../../dist/study-planner-skill.zip) (don't unzip it).
+1. Download [`study-planner-skill.zip`](https://github.com/zothken/study-planner/releases/latest/download/study-planner-skill.zip) (don't unzip it).
 2. **Customize → Skills** → **“+”** → **“+ Create skill”** → **“Upload a skill”** → pick the ZIP.
 3. Switch the skill on in the list.
 

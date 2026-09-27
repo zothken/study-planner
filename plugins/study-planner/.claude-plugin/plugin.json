@@ -2,6 +2,7 @@
   "name": "study-planner",
   "version": "1.1.0",
   "description": "Builds and maintains a personal study planner (Studienplaner) as a live artifact: this term's course catalogue with ratings, clash-checked timetable, wishlist and progress against the examination regulations. Imports from Stud.IP and other campus systems; German and English.",
+  "icon": "./.claude-plugin/icon.svg",
   "author": {
     "name": "zothken",
     "url": "https://github.com/zothken"
