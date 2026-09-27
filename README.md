@@ -20,7 +20,7 @@ Prüfungsordnung. Liest aus **Stud.IP** und anderen Campus-Systemen. Deutsch und
 /plugin install study-planner@zothken-plugins
 ```
 
-Files for manual install / Dateien für die manuelle Installation: [`dist/`](dist/)
+Files for manual install / Dateien für die manuelle Installation: [Releases](https://github.com/zothken/study-planner/releases/latest)
 
 ## Setup guide · Einrichtung
 
@@ -36,7 +36,6 @@ plugins/study-planner/                   the plugin
   skills/study-planner/assets/           planner engine (HTML) + worked example
   skills/study-planner/scripts/          build/check/extract, headless verification, Stud.IP helpers
   skills/study-planner/references/       data model, campus systems, regulations, house rules
-dist/                                    .plugin and skill .zip for manual install
 docs/img/                                screenshots (fictional example data)
 ```
 
