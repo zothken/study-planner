@@ -220,4 +220,4 @@ catalogues behind a login you need the desktop app's browser or Claude in Chrome
 - `scripts/lms/studip/studip-helpers.js` holds the Stud.IP import functions for the browser.
 - Try it: `python3 scripts/planner.py build --config assets/example/config.json --data assets/example/data.json -o example.html`.
 
-Bugs and ideas: issues on [zothken/study-planner](https://github.com/zothken/study-planner).
+Bugs and ideas: issues on [zothken/study-planner](https://github.com/zothken/study-planner). Licensed under MIT.

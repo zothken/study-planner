@@ -233,4 +233,4 @@ Kataloge hinter einem Login brauchst du den Browser der Desktop-App oder Claude 
 - `scripts/lms/studip/studip-helpers.js` sind die Stud.IP-Importfunktionen für den Browser.
 - Ausprobieren: `python3 scripts/planner.py build --config assets/example/config.json --data assets/example/data.json -o beispiel.html`.
 
-Fehler oder Wünsche: Issues im Repository [zothken/study-planner](https://github.com/zothken/study-planner).
+Fehler oder Wünsche: Issues im Repository [zothken/study-planner](https://github.com/zothken/study-planner). Lizenz: MIT.

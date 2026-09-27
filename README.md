@@ -41,3 +41,7 @@ docs/img/                                screenshots (fictional example data)
 ```
 
 All screenshots and the bundled example use made-up data. / Alle Screenshots und das Beispiel sind erfunden.
+
+## License · Lizenz
+
+MIT — see [LICENSE](LICENSE). / MIT — siehe [LICENSE](LICENSE).

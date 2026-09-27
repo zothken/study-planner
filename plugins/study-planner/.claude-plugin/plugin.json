@@ -8,5 +8,13 @@
   },
   "homepage": "https://github.com/zothken/study-planner",
   "repository": "https://github.com/zothken/study-planner",
-  "keywords": ["study", "university", "stud.ip", "course planning", "timetable", "studienplaner"]
+  "license": "MIT",
+  "keywords": [
+    "study",
+    "university",
+    "stud.ip",
+    "course planning",
+    "timetable",
+    "studienplaner"
+  ]
 }
