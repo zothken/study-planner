@@ -1,0 +1,245 @@
+{
+ "schema": 1,
+ "lang": "de",
+ "program": "M.Sc. Data Science (Beispiel)",
+ "title": "Studienplaner",
+ "titleEm": "Data Science",
+ "pageTitle": "Studienplaner Data Science",
+ "eyebrow": "M.Sc. Data Science · Universität Musterstadt · 120 LP",
+ "creditUnit": "LP",
+ "totalCredits": 120,
+ "semesterNow": "WiSe 2026/27",
+ "semesterShort": "WiSe 26/27",
+ "targets": [
+  "WiSe 2026/27",
+  "SoSe 2027",
+  "WiSe 2027/28",
+  "SoSe 2028",
+  "später"
+ ],
+ "blocked": [
+  {
+   "d": 2,
+   "s": "14:00",
+   "e": "18:00",
+   "label": "Werkstudentenjob"
+  }
+ ],
+ "storageKey": "study-planner-ds-musterstadt",
+ "lms": {
+  "name": "Stud.IP",
+  "url": "https://studip.example.org"
+ },
+ "grades": {
+  "min": 1,
+  "max": 5,
+  "step": 0.1
+ },
+ "defaultArea": "MW",
+ "areas": [
+  {
+   "id": "PF",
+   "label": "Pflichtbereich",
+   "short": "Pflicht",
+   "required": 30,
+   "color": "slate",
+   "note": "Alle Pflichtmodule, benotet."
+  },
+  {
+   "id": "WP",
+   "label": "Wahlpflichtbereich",
+   "short": "Wahlpflicht",
+   "required": 42,
+   "note": "Mindestens 18 LP aus einem Schwerpunkt, höchstens 30 aus jedem."
+  },
+  {
+   "id": "MW",
+   "label": "Freier Wahlbereich",
+   "short": "Freier Wahlbereich",
+   "required": 12,
+   "graded": false,
+   "color": "purple",
+   "note": "Jede Veranstaltung der Universität, auch unbenotet."
+  },
+  {
+   "id": "PR",
+   "label": "Studienprojekt",
+   "short": "Projekt",
+   "required": 12,
+   "color": "blue",
+   "note": "Zwei Semester, 6 LP je Teil."
+  },
+  {
+   "id": "THESIS",
+   "label": "Masterarbeit",
+   "required": 24,
+   "noCourses": true
+  }
+ ],
+ "tracks": [
+  {
+   "id": "ML",
+   "label": "Machine Learning",
+   "short": "ML",
+   "area": "WP",
+   "color": "teal"
+  },
+  {
+   "id": "DM",
+   "label": "Data Management & Systems",
+   "short": "Data Systems",
+   "area": "WP",
+   "color": "orange"
+  },
+  {
+   "id": "HC",
+   "label": "Human-Centred Data Science",
+   "short": "Human-Centred",
+   "area": "WP",
+   "color": "pink"
+  }
+ ],
+ "trackRule": {
+  "area": "WP",
+  "minInOne": 18,
+  "maxPerTrack": 30
+ },
+ "conditions": {
+  "enabled": true,
+  "id": "AUFL",
+  "label": "Auflage",
+  "labelPlural": "Auflagen",
+  "title": "Auflagen aus dem Zulassungsbescheid",
+  "required": 10,
+  "deadline": "Ende SoSe 2027",
+  "countsToTotal": false,
+  "color": "green"
+ },
+ "projects": {
+  "label": "Studienprojekt",
+  "title": "Studienprojekt",
+  "sub": "12 LP Pflicht, über zwei Semester",
+  "area": "PR",
+  "creditsPerSem": 6
+ },
+ "thesisGate": {
+  "credits": 60,
+  "areas": [
+   "PF",
+   "WP",
+   "MW",
+   "PR"
+  ],
+  "label": "Zulassung zur Masterarbeit"
+ },
+ "gradeNote": "<b>Gesamtnote:</b> Modulnoten aus Pflicht- und Wahlpflichtbereich und die Masterarbeit, gewichtet nach LP (§ 12 PO).",
+ "bestOf": {
+  "area": "WP",
+  "credits": 42,
+  "respectTrackMax": true,
+  "alsoAreas": [
+   "PF",
+   "PR"
+  ],
+  "label": "§ 12 Abs. 3"
+ },
+ "modulePrefix": "DS-WP-",
+ "modules": {
+  "DS-PF-STAT": {
+   "label": "Statistical Foundations",
+   "area": "PF"
+  },
+  "DS-PF-PROG": {
+   "label": "Programming for Data Science",
+   "area": "PF"
+  },
+  "DS-WP-ML1": {
+   "label": "Topics in Machine Learning",
+   "track": "ML",
+   "area": "WP"
+  },
+  "DS-WP-DL": {
+   "label": "Deep Learning",
+   "track": "ML",
+   "area": "WP"
+  },
+  "DS-WP-DB": {
+   "label": "Topics in Data Management",
+   "track": "DM",
+   "area": "WP"
+  },
+  "DS-WP-DIST": {
+   "label": "Distributed Systems",
+   "track": "DM",
+   "area": "WP"
+  },
+  "DS-WP-HCI": {
+   "label": "Topics in Human-Centred Computing",
+   "track": "HC",
+   "area": "WP"
+  },
+  "DS-WP-ETH": {
+   "label": "Data Ethics & Society",
+   "track": "HC",
+   "area": "WP"
+  },
+  "DS-MW": {
+   "label": "Freier Wahlbereich",
+   "area": "MW"
+  },
+  "DS-PR": {
+   "label": "Studienprojekt",
+   "area": "PR"
+  },
+  "INF-BSC-ALG": {
+   "label": "Algorithmen und Datenstrukturen (B.Sc.-Modul)",
+   "area": "MW",
+   "short": "BSc-ALG"
+  }
+ },
+ "moduleOrder": [
+  "DS-PF-STAT",
+  "DS-PF-PROG",
+  "DS-WP-ML1",
+  "DS-WP-DL",
+  "DS-WP-DB",
+  "DS-WP-DIST",
+  "DS-WP-HCI",
+  "DS-WP-ETH",
+  "DS-MW",
+  "DS-PR",
+  "INF-BSC-ALG"
+ ],
+ "extCatalogs": {
+  "bsc": {
+   "label": "B.Sc.-Kurs",
+   "title": "einzeln aus dem Bachelor-Programm importiert"
+  }
+ },
+ "turnus": {
+  "renumberedPrefix": ""
+ },
+ "import": {
+  "system": "Stud.IP",
+  "base": "https://studip.example.org",
+  "treeNodes": {
+   "master": "0000000000000000000000000000master",
+   "bachelor": "00000000000000000000000000bachelor"
+  },
+  "semesterIds": {
+   "WiSe 2026/27": "00000000000000000000000000000ws2627"
+  },
+  "moduleSearch": [
+   "DS-WP-ML1",
+   "DS-WP-DL",
+   "DS-WP-DB",
+   "DS-WP-DIST",
+   "DS-WP-HCI",
+   "DS-WP-ETH",
+   "DS-MW"
+  ],
+  "lastImport": "2026-09-24",
+  "notes": "Beispielwerte. Echte IDs liest der Import aus Stud.IP aus und trägt sie hier ein."
+ },
+ "sources": "Quellen: Stud.IP Universität Musterstadt, Vorlesungsverzeichnis Data Science (WiSe 2023/24 bis WiSe 2026/27) · Modulhandbuch M.Sc. Data Science 2024 · Prüfungsordnung, Stand 04/2024 · Zulassungsbescheid vom 20.08.2026. <i>Alle Angaben in diesem Beispiel sind erfunden.</i>"
+}

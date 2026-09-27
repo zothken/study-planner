@@ -1,0 +1,413 @@
+{
+ "updated": "2026-09-27",
+ "patchNotes": [
+  {
+   "date": "2026-09-24",
+   "title": "Katalog-Abgleich, zwei neue Kurse",
+   "items": [
+    "<b>Seit dem letzten Import neu in Stud.IP:</b> Causal Inference in Practice und Visual Analytics Lab.",
+    "<b>Über das Modulverzeichnis zusätzlich gefunden:</b> Datenschutzrecht für Informatiker:innen (läuft unter Rechtswissenschaft, zählt im Freien Wahlbereich).",
+    "Kein bisheriger Kurs ist weggefallen."
+   ]
+  },
+  {
+   "date": "2026-09-09",
+   "title": "Bachelor-Kurs einzeln nachgetragen",
+   "items": [
+    "Algorithmen und Datenstrukturen aus dem Bachelor-Programm, erkennbar am Chip „B.Sc.-Kurs“ — anrechenbar im Freien Wahlbereich."
+   ]
+  },
+  {
+   "date": "2026-09-02",
+   "title": "Erste Fassung",
+   "items": [
+    "Kurskatalog WiSe 2026/27, Wunschliste, Stundenplan und Leistungsstand gegen die Prüfungsordnung."
+   ]
+  }
+ ],
+ "notices": [
+  {
+   "section": "projects",
+   "kind": "alert",
+   "title": "Bewerbungsschluss Studienprojekte: 04.10.2026, 23:59",
+   "html": "Im Stud.IP-Kurs „Projektverteilung WiSe 2026/27“ bis zu drei Wunschprojekte angeben. <b>Nur nötig, wenn du schon in diesem Semester starten willst</b> — empfohlen ist der Start im 2. Semester.",
+   "until": "2026-10-04T23:59"
+  }
+ ],
+ "todo": [
+  {
+   "done": true,
+   "html": "<b>Geklärt: Auflagen zählen nicht auf die 120 LP.</b> Die 10 LP kommen obendrauf."
+  },
+  {
+   "html": "<b>Modulzuordnung prüfen bei</b> „Visual Analytics Lab“ — in Stud.IP ist kein Master-Modul eingetragen."
+  },
+  {
+   "html": "<b>Studienprojekt jetzt oder später?</b> Die Verteilung schließt am 04.10.2026; nur Projekte mit „Neustart“ sind einsteigbar."
+  }
+ ],
+ "prior": [
+  {
+   "key": "prior-intro-statistics",
+   "t": "Einführung in die Statistik",
+   "nr": "4.1010",
+   "lp": 6,
+   "sem": "SoSe 2026",
+   "cond": true,
+   "block": "bestanden im SoSe 2026",
+   "g": 2.3,
+   "note": "Auflage aus dem Zulassungsbescheid, im Vorsemester bestanden."
+  }
+ ],
+ "conditions": [
+  {
+   "t": "Mathematik für Data Science",
+   "k": "Vorlesung + Übung",
+   "nr": "4.2001",
+   "lp": 4,
+   "who": "Albers",
+   "rh": "each-ws",
+   "hs": "WS23,WS24,WS25,WS26",
+   "slots": [
+    {
+     "d": 5,
+     "s": "10:00",
+     "e": "12:00"
+    }
+   ],
+   "note": "<b>Pflicht-Auflage.</b> Lineare Algebra und Analysis im Tempo des Masters. Klausur, keine Vorkenntnisse über das Abitur hinaus."
+  }
+ ],
+ "courses": [
+  {
+   "t": "Statistical Learning",
+   "k": "Vorlesung + Übung",
+   "nr": "4.3101",
+   "lp": 8,
+   "who": "Brandt",
+   "mod": "DS-PF-STAT",
+   "st": "go",
+   "rh": "each-ws",
+   "hs": "WS23,WS24,WS25,WS26",
+   "slots": [
+    {
+     "d": 1,
+     "s": "10:00",
+     "e": "12:00"
+    },
+    {
+     "d": 3,
+     "s": "14:00",
+     "e": "16:00"
+    }
+   ],
+   "note": "Pflichtmodul. Regression, Klassifikation, Resampling, Regularisierung. Dein Statistik-Kurs aus dem Vorsemester ist genau der Vorlauf."
+  },
+  {
+   "t": "Data Engineering in Python",
+   "k": "Vorlesung + Übung",
+   "nr": "4.3102",
+   "lp": 6,
+   "who": "Celik",
+   "mod": "DS-PF-PROG",
+   "st": "go",
+   "rhx": "each-ws",
+   "rhxq": "Yes, every winter term.",
+   "hs": "WS24,WS25,WS26",
+   "slots": [
+    {
+     "d": 2,
+     "s": "08:00",
+     "e": "10:00"
+    }
+   ],
+   "note": "Pflichtmodul. pandas, Polars, Datenpipelines, Tests. Für dich mit Python-Erfahrung gut planbar."
+  },
+  {
+   "t": "Introduction to Deep Learning",
+   "k": "Vorlesung + Übung",
+   "nr": "4.3201",
+   "lp": 8,
+   "who": "Dorn",
+   "mod": "DS-WP-ML1 · DL",
+   "st": "go",
+   "rh": "mostly-ws",
+   "hs": "WS25,WS26",
+   "slots": [
+    {
+     "d": 2,
+     "s": "12:00",
+     "e": "14:00"
+    },
+    {
+     "d": 4,
+     "s": "10:00",
+     "e": "12:00"
+    }
+   ],
+   "note": "In zwei Modulen anrechenbar. <b>Der stärkste Einstieg in den ML-Schwerpunkt.</b> Kollidiert mit Graph Databases (Di 12–14)."
+  },
+  {
+   "t": "Probabilistic Machine Learning",
+   "k": "Vorlesung",
+   "nr": "4.3202",
+   "lp": 6,
+   "who": "Engel",
+   "mod": "DS-WP-ML1",
+   "st": "cau",
+   "rh": "first",
+   "hs": "WS26",
+   "slots": [
+    {
+     "d": 3,
+     "s": "10:00",
+     "e": "12:00"
+    }
+   ],
+   "note": "Bayes'sche Modelle, Variational Inference, Gauß-Prozesse. <b>Setzt sichere Wahrscheinlichkeitsrechnung voraus</b> — mit Mathematik für Data Science parallel machbar, aber ein Arbeitskurs."
+  },
+  {
+   "t": "Causal Inference in Practice",
+   "k": "Seminar",
+   "nr": "4.3210",
+   "lp": 4,
+   "who": "Fuchs",
+   "mod": "DS-WP-ML1",
+   "st": "cau",
+   "rhx": "unsure",
+   "rhxq": "Unsure.",
+   "neu": "2026-09-24",
+   "slots": [
+    {
+     "d": 4,
+     "s": "14:00",
+     "e": "16:00"
+    }
+   ],
+   "note": "Potential Outcomes, DAGs, Difference-in-Differences an echten Datensätzen. Referat plus Hausarbeit."
+  },
+  {
+   "t": "Graph Databases",
+   "k": "Seminar",
+   "nr": "4.3301",
+   "lp": 4,
+   "who": "Graf",
+   "mod": "DS-WP-DB",
+   "st": "go",
+   "rh": "irregular",
+   "hs": "SS25,WS26",
+   "slots": [
+    {
+     "d": 2,
+     "s": "12:00",
+     "e": "14:00"
+    }
+   ],
+   "note": "Property Graphs, Cypher, Graph-Algorithmen. Keine Voraussetzungen außer SQL."
+  },
+  {
+   "t": "Distributed Data Processing",
+   "k": "Vorlesung + Übung",
+   "nr": "4.3302",
+   "lp": 8,
+   "who": "Hahn",
+   "mod": "DS-WP-DIST",
+   "st": "cau",
+   "rh": "each-ws",
+   "hs": "WS23,WS24,WS25,WS26",
+   "slots": [
+    {
+     "d": 1,
+     "s": "14:00",
+     "e": "16:00"
+    },
+    {
+     "d": 3,
+     "s": "12:00",
+     "e": "14:00"
+    }
+   ],
+   "note": "Spark, Streaming, verteilte Speicher. <b>Linux-Kommandozeile wird vorausgesetzt</b> — kostet ohne Vorerfahrung ein paar Abende."
+  },
+  {
+   "t": "Database Internals",
+   "k": "Blockseminar",
+   "nr": "4.3303",
+   "lp": 4,
+   "who": "Ilić",
+   "mod": "DS-WP-DB",
+   "st": "stop",
+   "rh": "first",
+   "hs": "WS26",
+   "block": "15.–19.02.2027",
+   "note": "<b>„Voraussetzung: Datenbanksysteme II“</b> — die fehlt dir. Frühestens nach einem entsprechenden Kurs."
+  },
+  {
+   "t": "Visual Analytics Lab",
+   "k": "Praktikum",
+   "nr": "4.3401",
+   "lp": 6,
+   "who": "Jung",
+   "mod": "keine Zuordnung",
+   "st": "go",
+   "neu": "2026-09-24",
+   "slots": [
+    {
+     "d": 5,
+     "s": "12:00",
+     "e": "15:00"
+    }
+   ],
+   "note": "Interaktive Dashboards mit Vega-Lite und D3, Teamprojekt mit Nutzerstudie. <b>In Stud.IP ohne Master-Modul</b> — Anrechnung vorher klären (siehe „Zu klären“).",
+   "area": "MW"
+  },
+  {
+   "t": "Human-Centred Machine Learning",
+   "k": "Seminar",
+   "nr": "4.3402",
+   "lp": 4,
+   "who": "Kaya",
+   "mod": "DS-WP-HCI",
+   "st": "go",
+   "rhx": "repeat",
+   "rhxq": "Yes",
+   "hs": "WS25,WS26",
+   "slots": [
+    {
+     "d": 4,
+     "s": "10:00",
+     "e": "12:00"
+    }
+   ],
+   "note": "Interpretierbarkeit, Nutzerstudien, Fairness-Metriken. Liegt zeitgleich mit Introduction to Deep Learning (Do 10–12)."
+  },
+  {
+   "t": "Data Ethics",
+   "k": "Vorlesung",
+   "nr": "4.3403",
+   "lp": 4,
+   "who": "Lang",
+   "mod": "DS-WP-ETH",
+   "st": "go",
+   "rh": "each-ss",
+   "rhx": "once",
+   "rhxq": "No, only this winter.",
+   "hs": "SS24,SS25,SS26,WS26",
+   "slots": [
+    {
+     "d": 1,
+     "s": "16:00",
+     "e": "18:00"
+    }
+   ],
+   "note": "Einmalig im Winter statt im Sommer. Essay als Leistung."
+  },
+  {
+   "t": "Datenschutzrecht für Informatiker:innen",
+   "k": "Vorlesung",
+   "nr": "1.2204",
+   "lp": 3,
+   "who": "Meier",
+   "mod": "DS-MW",
+   "st": "go",
+   "rh": "each-ws",
+   "hs": "WS24,WS25,WS26",
+   "neu": "2026-09-24",
+   "slots": [
+    {
+     "d": 3,
+     "s": "16:00",
+     "e": "18:00"
+    }
+   ],
+   "note": "Läuft unter Rechtswissenschaft, nur über das Modulverzeichnis gefunden. DSGVO, Einwilligung, Anonymisierung. Deutschsprachig."
+  },
+  {
+   "t": "Algorithmen und Datenstrukturen",
+   "k": "Vorlesung + Übung",
+   "nr": "6.1001",
+   "lp": 8,
+   "who": "Nowak",
+   "mod": "INF-BSC-ALG",
+   "st": "go",
+   "ext": "bsc",
+   "rh": "each-ws",
+   "hs": "WS23,WS24,WS25,WS26",
+   "slots": [
+    {
+     "d": 2,
+     "s": "10:00",
+     "e": "12:00"
+    },
+    {
+     "d": 4,
+     "s": "08:00",
+     "e": "10:00"
+    }
+   ],
+   "note": "<b>Bachelor-Modul, auf deinen Wunsch einzeln nachgetragen.</b> Im Freien Wahlbereich anrechenbar."
+  }
+ ],
+ "future": [
+  {
+   "t": "Reinforcement Learning",
+   "nr": "4.3250",
+   "lp": 6,
+   "mod": "DS-WP-ML1",
+   "rh": "each-ss",
+   "hs": "SS24,SS25,SS26",
+   "note": "Verlässlich jedes Sommersemester. Sinnvoll nach Introduction to Deep Learning."
+  },
+  {
+   "t": "Stream Processing Systems",
+   "nr": "4.3350",
+   "lp": 4,
+   "mod": "DS-WP-DIST",
+   "rhx": "yearly",
+   "rhxq": "Planned as a yearly summer course.",
+   "hs": "SS26",
+   "note": "Ergänzt Distributed Data Processing."
+  }
+ ],
+ "projects": [
+  {
+   "t": "Fair Credit Scoring — Part I",
+   "nr": "4.3901",
+   "who": "Kaya / Lang",
+   "when": "Mi 10:00–12:00",
+   "lpPerSem": 6,
+   "mod": "DS-PR",
+   "slots": [
+    {
+     "d": 3,
+     "s": "10:00",
+     "e": "12:00"
+    }
+   ],
+   "note": "Bias-Analyse eines echten Kreditdatensatzes mit einer Partnerbank. Passt zum Schwerpunkt Human-Centred."
+  },
+  {
+   "t": "Energy Forecasting — Part I",
+   "nr": "4.3902",
+   "who": "Brandt",
+   "when": "Do 14:00–16:00",
+   "lpPerSem": 6,
+   "mod": "DS-PR",
+   "slots": [
+    {
+     "d": 4,
+     "s": "14:00",
+     "e": "16:00"
+    }
+   ],
+   "note": "Lastprognosen für ein Stadtwerk, Zeitreihenmodelle bis Transformer."
+  },
+  {
+   "t": "Laufende Projekte (Part II)",
+   "open": false,
+   "who": "diverse",
+   "when": "nicht einsteigbar",
+   "note": "Urban Mobility · Clinical NLP. Beide bereits im zweiten Semester."
+  }
+ ]
+}

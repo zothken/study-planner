@@ -1,0 +1,1342 @@
+<title>Study Planner</title>
+<meta name="planner-template" content="study-planner 1.1.0">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Source+Sans+3:ital,wght@0,300;0,400;0,600;0,700;1,400&family=IBM+Plex+Mono:wght@400;500;600&display=swap">
+
+<style>
+/* ===== Tokens. Light first, dark twice (system preference + explicit data-theme). ===== */
+:root{
+  --paper:#f5f8f8; --surface:#ffffff; --surface-2:#eaf0f1; --surface-3:#e0e8e9;
+  --ink:#0f1c1f; --ink-2:#48595d; --ink-3:#6f8184; --line:#d5dfe0; --line-2:#c2d0d1;
+  --accent:#0d666c; --accent-2:#0a4c51; --accent-soft:#d2e8e9;
+  --go:#2c6b40; --go-bg:#dcecdf; --go-line:#a9cfb4;
+  --caution:#82550a; --caution-bg:#f6e9cd; --caution-line:#ddc084;
+  --stop:#9a332d; --stop-bg:#f6dfdc; --stop-line:#e0aca6;
+  --must:#5f3a99; --must-bg:#e7e0f6; --must-line:#c4b1e6;
+  --wish:#1f5f96; --wish-bg:#dbe8f5; --wish-line:#a8c6e3;
+  --shadow:0 1px 2px rgba(15,28,31,.06), 0 6px 18px -10px rgba(15,28,31,.28);
+  --r:10px; color-scheme:light;
+}
+@media (prefers-color-scheme:dark){
+  :root:not([data-theme="light"]){
+    --paper:#0b1517; --surface:#122023; --surface-2:#19292d; --surface-3:#213338;
+    --ink:#e9f2f2; --ink-2:#a6babd; --ink-3:#7d9295; --line:#26383c; --line-2:#31474c;
+    --accent:#4ec6cc; --accent-2:#7fdbe0; --accent-soft:#0f383c;
+    --go:#79cc94; --go-bg:#14301e; --go-line:#2c5c3c;
+    --caution:#e2b667; --caution-bg:#32250c; --caution-line:#63491a;
+    --stop:#f0918b; --stop-bg:#3a1917; --stop-line:#6d302c;
+    --must:#bda3f0; --must-bg:#241a3b; --must-line:#453368;
+    --wish:#83b9e8; --wish-bg:#122636; --wish-line:#2c4a68;
+    --shadow:0 1px 2px rgba(0,0,0,.4), 0 8px 22px -12px rgba(0,0,0,.7);
+    color-scheme:dark;
+  }
+}
+:root[data-theme="dark"]{
+  --paper:#0b1517; --surface:#122023; --surface-2:#19292d; --surface-3:#213338;
+  --ink:#e9f2f2; --ink-2:#a6babd; --ink-3:#7d9295; --line:#26383c; --line-2:#31474c;
+  --accent:#4ec6cc; --accent-2:#7fdbe0; --accent-soft:#0f383c;
+  --go:#79cc94; --go-bg:#14301e; --go-line:#2c5c3c;
+  --caution:#e2b667; --caution-bg:#32250c; --caution-line:#63491a;
+  --stop:#f0918b; --stop-bg:#3a1917; --stop-line:#6d302c;
+  --must:#bda3f0; --must-bg:#241a3b; --must-line:#453368;
+  --wish:#83b9e8; --wish-bg:#122636; --wish-line:#2c4a68;
+  --shadow:0 1px 2px rgba(0,0,0,.4), 0 8px 22px -12px rgba(0,0,0,.7);
+  color-scheme:dark;
+}
+
+*{box-sizing:border-box}
+body{margin:0; background:var(--paper); color:var(--ink);
+  font-family:"Source Sans 3", ui-sans-serif, system-ui, sans-serif; font-size:16px; line-height:1.55; -webkit-font-smoothing:antialiased}
+.wrap{max-width:1120px; margin:0 auto; padding:0 20px 90px}
+h1,h2{font-family:"Instrument Serif", ui-serif, Georgia, serif; font-weight:400; text-wrap:balance; letter-spacing:.01em}
+.mono{font-family:"IBM Plex Mono", ui-monospace, monospace; font-variant-numeric:tabular-nums}
+a{color:var(--accent-2)}
+[hidden]{display:none !important}
+
+header.masthead{border-bottom:1px solid var(--line); background:linear-gradient(180deg,var(--surface) 0%,var(--paper) 100%)}
+.masthead .wrap{padding-top:34px; padding-bottom:24px}
+.eyebrow{font-family:"IBM Plex Mono",monospace; font-size:11.5px; letter-spacing:.16em; text-transform:uppercase; color:var(--accent); margin:0 0 12px}
+h1{font-size:clamp(32px,5vw,48px); line-height:1.05; margin:0 0 10px}
+h1 em{font-style:italic; color:var(--accent)}
+.lede{max-width:66ch; color:var(--ink-2); font-size:17px; margin:0}
+
+section{margin-top:48px}
+.sechead{display:flex; align-items:baseline; gap:14px; flex-wrap:wrap; border-bottom:1px solid var(--line); padding-bottom:10px; margin-bottom:20px}
+.sechead h2{font-size:29px; margin:0}
+.sechead p{margin:0; color:var(--ink-3); font-size:14.5px}
+
+/* meters: label never wraps into the numbers (user feedback, 09.09.2026) */
+.meters{display:grid; grid-template-columns:repeat(auto-fit,minmax(min(280px,100%),1fr)); gap:12px}
+.meter{background:var(--surface); border:1px solid var(--line); border-radius:var(--r); padding:13px 15px; box-shadow:var(--shadow)}
+.meter .mt{display:flex; flex-wrap:wrap; justify-content:space-between; align-items:baseline; gap:2px 8px; margin-bottom:8px}
+.meter .mt b{font-weight:600; font-size:14.5px}
+.meter .mt span{font-family:"IBM Plex Mono",monospace; font-size:12.5px; color:var(--ink-2); font-variant-numeric:tabular-nums; white-space:nowrap; flex-shrink:0; margin-left:auto}
+.bar{height:8px; border-radius:99px; background:var(--surface-3); overflow:hidden; display:flex}
+.bar i{display:block; height:100%; background:var(--accent)}
+.bar i.plan{background:var(--accent); opacity:.42}
+.bar i.over{background:var(--stop)}
+.meter small{display:block; margin-top:7px; font-size:12.5px; color:var(--ink-3)}
+.meter.warn{border-color:var(--stop-line)}
+.meter.warn small{color:var(--stop)}
+.meter.ok small{color:var(--go)}
+
+.statgrid{display:grid; grid-template-columns:repeat(auto-fit,minmax(min(150px,100%),1fr)); gap:1px; background:var(--line); border:1px solid var(--line); border-radius:var(--r); overflow:hidden; margin-top:18px}
+.statgrid div{background:var(--surface); padding:13px 15px}
+.statgrid dt{font-family:"IBM Plex Mono",monospace; font-size:10.5px; letter-spacing:.13em; text-transform:uppercase; color:var(--ink-3); margin:0 0 5px}
+.statgrid dd{margin:0; font-size:25px; font-family:"IBM Plex Mono",monospace; font-weight:500; font-variant-numeric:tabular-nums; line-height:1.1}
+.statgrid dd small{font-size:12.5px; color:var(--ink-3); font-weight:400}
+.statgrid .warn dd{color:var(--stop)}
+
+/* pills */
+.pill{display:inline-flex; align-items:center; gap:5px; border-radius:999px; padding:2px 9px; font-size:11.5px;
+  font-family:"IBM Plex Mono",monospace; letter-spacing:.05em; border:1px solid transparent; white-space:nowrap}
+.p-must{background:var(--must-bg); color:var(--must); border-color:var(--must-line)}
+.p-go{background:var(--go-bg); color:var(--go); border-color:var(--go-line)}
+.p-cau{background:var(--caution-bg); color:var(--caution); border-color:var(--caution-line)}
+.p-stop{background:var(--stop-bg); color:var(--stop); border-color:var(--stop-line)}
+.p-wish{background:var(--wish-bg); color:var(--wish); border-color:var(--wish-line)}
+.p-plain{background:var(--surface-2); color:var(--ink-2); border-color:var(--line)}
+.p-accent{background:var(--accent-soft); color:var(--accent); border-color:var(--accent-soft)}
+.p-new{background:transparent; color:var(--ink-2); border:1px dashed var(--line-2)}
+.p-rhx{background:var(--go-bg); color:var(--go); border-color:var(--go); font-weight:500}
+.p-rhx-un{background:var(--caution-bg); color:var(--caution); border-color:var(--caution); font-weight:500}
+.p-rhx-no{background:var(--stop-bg); color:var(--stop); border-color:var(--stop); font-weight:500}
+.pill i.dot{display:inline-block; width:8px; height:8px; border-radius:50%; border:1px solid}
+button.pill{cursor:pointer; transition:.12s}
+button.pill:hover{border-color:var(--accent); color:var(--accent)}
+button.pill:focus-visible{outline:2px solid var(--accent); outline-offset:2px}
+button.pill[aria-pressed="true"]{background:var(--accent); color:var(--surface); border-color:var(--accent)}
+
+/* cards */
+.grid{display:grid; gap:12px}
+.grid.two{grid-template-columns:repeat(auto-fit,minmax(min(320px,100%),1fr))}
+.card{background:var(--surface); border:1px solid var(--line); border-radius:var(--r); padding:14px 16px;
+  display:flex; flex-direction:column; gap:9px; position:relative; box-shadow:var(--shadow); min-width:0}
+.card.s-plan{border-color:var(--accent); box-shadow:0 0 0 1px var(--accent), var(--shadow)}
+.card.s-wish{border-color:var(--wish-line); box-shadow:0 0 0 1px var(--wish-line), var(--shadow)}
+.card.s-done{border-color:var(--go-line); box-shadow:0 0 0 1px var(--go-line), var(--shadow)}
+.card.clash{border-color:var(--stop-line); box-shadow:0 0 0 1px var(--stop-line), var(--shadow)}
+.card h3{margin:0; font-size:19.5px; line-height:1.25; font-family:"Source Sans 3",sans-serif; font-weight:600; overflow-wrap:anywhere}
+.meta{display:flex; flex-wrap:wrap; gap:6px; align-items:center}
+.when{font-family:"IBM Plex Mono",monospace; font-size:12.5px; color:var(--ink-2)}
+.who{font-size:13px; color:var(--ink-3)}
+.who a{color:var(--ink-3)}
+.note{font-size:14px; color:var(--ink-2); margin:0}
+.note b{color:var(--ink); font-weight:600}
+.srcline{font-family:"IBM Plex Mono",monospace; font-size:12px; color:var(--ink-3); margin:0}
+.clashmsg{font-size:12.5px; color:var(--stop); font-family:"IBM Plex Mono",monospace; margin:0}
+.ghostmsg{font-size:12.5px; color:var(--wish); font-family:"IBM Plex Mono",monospace; margin:0}
+
+/* status row */
+.statusrow{display:flex; gap:7px; flex-wrap:wrap; align-items:center; padding-top:9px; border-top:1px dashed var(--line)}
+.seg{display:inline-flex; flex-wrap:wrap; border:1px solid var(--line-2); border-radius:999px; overflow:hidden; background:var(--surface-2); max-width:100%}
+.seg button{appearance:none; border:0; background:transparent; cursor:pointer; padding:4px 11px;
+  font-family:"IBM Plex Mono",monospace; font-size:11.5px; color:var(--ink-2); transition:.12s; border-right:1px solid var(--line)}
+.seg button:last-child{border-right:0}
+.seg button:hover{color:var(--ink); background:var(--surface-3)}
+.seg button[aria-pressed="true"]{background:var(--accent); color:var(--surface)}
+.seg button[aria-pressed="true"].v-wish{background:var(--wish)}
+.seg button[aria-pressed="true"].v-done{background:var(--go)}
+.seg button[aria-pressed="true"].v-fail{background:var(--stop)}
+.seg button:focus-visible{outline:2px solid var(--accent); outline-offset:-2px}
+.statusrow select, .statusrow input{
+  font-family:"IBM Plex Mono",monospace; font-size:12px; padding:4px 8px; border-radius:7px;
+  border:1px solid var(--line-2); background:var(--surface); color:var(--ink)}
+.statusrow input{width:74px}
+.statusrow label{font-family:"IBM Plex Mono",monospace; font-size:10.5px; letter-spacing:.12em; text-transform:uppercase; color:var(--ink-3)}
+.statusrow select:focus-visible, .statusrow input:focus-visible{outline:2px solid var(--accent); outline-offset:1px}
+
+/* toolbar */
+.toolbar{position:sticky; top:var(--toc-h, 46px); z-index:20; background:var(--paper); border-bottom:1px solid var(--line); padding:10px 0 11px; margin-bottom:18px}
+.tools{display:flex; gap:8px; flex-wrap:wrap; align-items:center}
+.toolrow{display:contents}
+.fwrap{position:relative; display:inline-flex; min-width:0}
+.fwrap::after{content:"▾"; position:absolute; right:11px; top:50%; transform:translateY(-50%);
+  pointer-events:none; font-size:10px; color:var(--ink-3); transition:.12s}
+.fwrap.on::after{color:var(--accent)}
+.fsel{appearance:none; -webkit-appearance:none; -moz-appearance:none;
+  font-family:"IBM Plex Mono",monospace; font-size:12px; letter-spacing:.03em;
+  padding:6px 28px 6px 12px; border-radius:999px; min-width:0; max-width:100%;
+  border:1px solid var(--line-2); background:var(--surface); color:var(--ink-2);
+  cursor:pointer; transition:.12s; text-overflow:ellipsis}
+.fsel:hover{border-color:var(--accent); color:var(--ink)}
+.fsel.on{border-color:var(--accent); background:var(--accent-soft); color:var(--accent); font-weight:500}
+.fsel:focus-visible{outline:2px solid var(--accent); outline-offset:2px}
+.fsel option{font-family:"Source Sans 3",sans-serif; color:var(--ink); background:var(--surface)}
+/* the area select lists long module names — cap its width so it never blows up the toolbar */
+.fwrap-area{max-width:min(320px,100%)}
+.fwrap-area .fsel{width:100%}
+.freset{font-family:"IBM Plex Mono",monospace; font-size:11.5px; padding:5px 10px; border-radius:999px;
+  border:1px dashed var(--line-2); background:transparent; color:var(--ink-3); cursor:pointer; transition:.12s}
+.freset:hover{border-color:var(--stop); color:var(--stop)}
+.freset:focus-visible{outline:2px solid var(--accent); outline-offset:2px}
+input[type="search"]{flex:1 1 210px; min-width:130px; padding:6px 11px; border-radius:999px; border:1px solid var(--line-2);
+  background:var(--surface); color:var(--ink); font-family:"Source Sans 3",sans-serif; font-size:14px}
+input[type="search"]:focus-visible{outline:2px solid var(--accent); outline-offset:1px}
+.count{font-family:"IBM Plex Mono",monospace; font-size:12px; color:var(--ink-3); margin-left:auto}
+
+/* table of contents */
+.toc{position:sticky; top:0; z-index:40; background:var(--paper); border-bottom:1px solid var(--line)}
+.toc nav{max-width:1120px; margin:0 auto; padding:9px 20px; display:flex; gap:6px; flex-wrap:wrap; align-items:center}
+.toc a{font-family:"IBM Plex Mono",monospace; font-size:12px; letter-spacing:.03em; text-decoration:none;
+  color:var(--ink-2); padding:4px 10px; border-radius:999px; border:1px solid transparent; transition:.12s; white-space:nowrap}
+.toc a:hover{color:var(--ink); border-color:var(--line-2); background:var(--surface)}
+.toc a[aria-current="true"]{background:var(--accent-soft); color:var(--accent); border-color:var(--accent-soft)}
+.toc a:focus-visible{outline:2px solid var(--accent); outline-offset:2px}
+.toc .brand{font-family:"IBM Plex Mono",monospace; font-size:10.5px; letter-spacing:.16em; text-transform:uppercase;
+  color:var(--ink-3); margin-right:4px; padding:4px 0}
+section{scroll-margin-top:calc(var(--toc-h, 46px) + 12px)}
+html{scroll-behavior:smooth}
+.grouphead{grid-column:1/-1; display:flex; align-items:baseline; gap:10px; flex-wrap:wrap; margin:20px 0 -2px; padding-bottom:6px; border-bottom:1px solid var(--line)}
+.grouphead:first-child{margin-top:2px}
+.grouphead h3{font-family:"Instrument Serif",ui-serif,Georgia,serif; font-weight:400; font-size:23px; margin:0}
+.grouphead span{font-family:"IBM Plex Mono",monospace; font-size:11.5px; color:var(--ink-3)}
+.grouphead span.ctx{color:var(--accent)}
+.splabel{grid-column:1/-1; margin:30px 0 -8px; font-family:"IBM Plex Mono",monospace; font-size:10.5px;
+  letter-spacing:.16em; text-transform:uppercase; color:var(--accent)}
+.splabel:first-child{margin-top:4px}
+.hint{font-size:13.5px; color:var(--ink-3); margin:-8px 0 16px; max-width:78ch}
+.hint b{color:var(--ink-2); font-weight:600}
+.subhead{font-family:"Instrument Serif",ui-serif,Georgia,serif; font-weight:400; font-size:24px; margin:26px 0 12px}
+
+/* timetable */
+.ttwrap{overflow-x:auto; border:1px solid var(--line); border-radius:var(--r); background:var(--surface)}
+.tt{display:grid}
+.tt .hd{font-family:"IBM Plex Mono",monospace; font-size:11px; letter-spacing:.12em; text-transform:uppercase; color:var(--ink-3);
+  padding:9px 8px; border-bottom:1px solid var(--line); text-align:center}
+.tt .hours{position:relative; border-right:1px solid var(--line)}
+.tt .col{position:relative; border-right:1px solid var(--line)}
+.tt .col:last-child{border-right:0}
+.hourline{position:absolute; left:0; right:0; border-top:1px dashed var(--line)}
+.hourlab{position:absolute; right:6px; font-family:"IBM Plex Mono",monospace; font-size:10.5px; color:var(--ink-3); transform:translateY(-6px)}
+.ev{position:absolute; left:3px; right:3px; border-radius:6px; padding:4px 6px; overflow:hidden;
+  background:var(--accent-soft); border:1px solid var(--accent); color:var(--ink); font-size:11.5px; line-height:1.25}
+/* like Stud.IP: a strong bar on the left in the line colour */
+.ev:not(.ghost){border-left-width:5px}
+.ev b{display:block; font-weight:600; font-size:11.5px}
+.ev span{font-family:"IBM Plex Mono",monospace; font-size:10px; color:var(--ink-2)}
+/* candidates are dashed; red ONLY for a candidate that sits on something booked.
+   Booked courses never turn red, the clash is shown on the card (user feedback, 09.09.2026). */
+.ev.ghost{background:transparent; border:1px dashed var(--wish); color:var(--wish); opacity:.92}
+.ev.ghost b{font-weight:500; font-style:italic}
+.ev.ghost span{color:var(--wish)}
+.ev.ghost.bad{background:var(--stop-bg); border-color:var(--stop); color:var(--stop)}
+.ev.ghost.bad span{color:var(--stop)}
+.ttkey{display:flex; gap:12px; flex-wrap:wrap; margin:10px 0 0; font-size:12.5px; color:var(--ink-2)}
+.ttkey div{display:flex; gap:6px; align-items:center}
+.ttkey i{display:inline-block; width:14px; height:14px; border-radius:4px; border:1px solid}
+.ttkey i.k-ghost{border-style:dashed; border-color:var(--wish); background:transparent}
+.ttkey i.k-bad{border-style:dashed; border-color:var(--stop); background:var(--stop-bg)}
+.ev{z-index:1}
+.ev.blocked{z-index:0; left:0 !important; right:0 !important; width:auto !important; border:1px dashed var(--line-2); border-radius:0; color:var(--ink-3);
+  background:repeating-linear-gradient(135deg, var(--surface-2) 0 6px, transparent 6px 12px)}
+.ev.blocked b{font-weight:500; font-style:italic}
+.ttkey i.k-blocked{border-style:dashed; border-color:var(--line-2); background:repeating-linear-gradient(135deg, var(--surface-3) 0 3px, transparent 3px 6px)}
+.blockmsg{font-size:12.5px; color:var(--caution); font-family:"IBM Plex Mono",monospace; margin:0}
+.empty-tt{padding:26px 18px; color:var(--ink-3); font-size:14.5px; text-align:center; margin:0}
+
+/* patch notes */
+.patch{margin-top:32px}
+.pn{display:grid; gap:8px}
+.pn details{background:var(--surface); border:1px solid var(--line); border-radius:var(--r); box-shadow:var(--shadow)}
+.pn details:first-child{border-color:var(--accent-soft); box-shadow:0 0 0 1px var(--accent-soft), var(--shadow)}
+.pn summary{cursor:pointer; list-style:none; display:flex; gap:10px; align-items:baseline; flex-wrap:wrap; padding:11px 16px}
+.pn summary::-webkit-details-marker{display:none}
+.pn summary::before{content:"▸"; color:var(--ink-3); font-size:11px; display:inline-block; transition:transform .12s}
+.pn details[open] summary::before{transform:rotate(90deg)}
+.pn summary:focus-visible{outline:2px solid var(--accent); outline-offset:2px; border-radius:var(--r)}
+.pn-date{font-family:"IBM Plex Mono",monospace; font-size:12px; color:var(--accent); font-variant-numeric:tabular-nums}
+.pn-title{font-weight:600; font-size:15px}
+.pn-n{font-family:"IBM Plex Mono",monospace; font-size:11.5px; color:var(--ink-3); margin-left:auto}
+.pn ul{margin:0; padding:0 18px 13px 44px; color:var(--ink-2); font-size:14.5px}
+.pn li{margin:0 0 5px}
+.pn li b{color:var(--ink); font-weight:600}
+
+/* notices: only for facts that are still current (deadlines, how things work) —
+   never for change logs, those belong in the patch notes */
+.callout{border-left:3px solid var(--accent); background:var(--surface); border-radius:0 var(--r) var(--r) 0; padding:14px 18px; margin:0 0 16px; box-shadow:var(--shadow)}
+.callout.alert{border-left-color:var(--stop)}
+.callout.good{border-left-color:var(--go)}
+.callout h3{font-family:"Source Sans 3",sans-serif; font-weight:700; font-size:15px; margin:0 0 5px}
+.callout p{margin:0; color:var(--ink-2); font-size:14.5px}
+.callout p + p{margin-top:7px}
+
+ol.steps{margin:0; padding-left:0; list-style:none; counter-reset:s}
+ol.steps li{counter-increment:s; position:relative; padding-left:38px; margin-bottom:13px; color:var(--ink-2); font-size:15px}
+ol.steps li::before{content:counter(s); position:absolute; left:0; top:1px; width:25px; height:25px; border-radius:50%;
+  background:var(--accent-soft); color:var(--accent); font-family:"IBM Plex Mono",monospace; font-size:12px; font-weight:600;
+  display:grid; place-items:center}
+ol.steps li b{color:var(--ink)}
+ol.steps li.done{color:var(--ink-3)}
+ol.steps li.done::before{content:"✓"; background:var(--go-bg); color:var(--go)}
+.legend{display:flex; gap:14px; flex-wrap:wrap; font-size:13.5px; color:var(--ink-2); margin:0 0 18px}
+.legend div{display:flex; gap:7px; align-items:center}
+
+.databar{display:flex; gap:10px; flex-wrap:wrap; align-items:center; background:var(--surface); border:1px solid var(--line);
+  border-radius:var(--r); padding:12px 15px; box-shadow:var(--shadow)}
+.databar .st{font-family:"IBM Plex Mono",monospace; font-size:12px; color:var(--ink-3); margin-right:auto}
+.btn{font-family:"Source Sans 3",sans-serif; font-size:13.5px; padding:6px 13px; border-radius:8px; cursor:pointer;
+  border:1px solid var(--line-2); background:var(--surface-2); color:var(--ink); transition:.12s}
+.btn:hover{border-color:var(--accent); color:var(--accent)}
+.btn:focus-visible{outline:2px solid var(--accent); outline-offset:2px}
+.btn.danger:hover, .btn.armed{border-color:var(--stop); color:var(--stop)}
+.importbox{margin-top:12px; background:var(--surface); border:1px solid var(--line); border-radius:var(--r); padding:12px 15px; display:grid; gap:10px}
+.importbox textarea{width:100%; min-height:120px; font-family:"IBM Plex Mono",monospace; font-size:12px; padding:8px 10px;
+  border-radius:8px; border:1px solid var(--line-2); background:var(--surface-2); color:var(--ink); resize:vertical}
+.importbox .row{display:flex; gap:10px; flex-wrap:wrap; align-items:center}
+.importbox input[type=file]{font-size:13px; color:var(--ink-2); max-width:100%}
+
+footer{margin-top:56px; padding-top:20px; border-top:1px solid var(--line); color:var(--ink-3); font-size:13px}
+footer p{margin:0 0 6px}
+@media (max-width:720px){
+  .masthead .wrap{padding-top:24px}
+  .statgrid dd{font-size:21px}
+  .toolbar{padding:7px 0 8px}
+  .tools{display:block}
+  .toolrow{display:flex; gap:6px; flex-wrap:wrap; align-items:center}
+  .toolrow + .toolrow{margin-top:6px}
+  /* filters and the section nav each stay one row and scroll sideways */
+  .toolrow.filters{flex-wrap:nowrap; overflow-x:auto; scrollbar-width:none; -webkit-overflow-scrolling:touch;
+    margin:0 -20px; padding:2px 20px}
+  .toolrow.filters::-webkit-scrollbar{display:none}
+  .fwrap{flex:0 0 auto}
+  .toc nav{flex-wrap:nowrap; overflow-x:auto; scrollbar-width:none; -webkit-overflow-scrolling:touch; padding:8px 20px}
+  .toc nav::-webkit-scrollbar{display:none}
+  .toc .brand{display:none}
+  input[type="search"]{flex:1 1 auto; min-width:0}
+  .count{margin-left:8px; flex:0 0 auto}
+  .seg button{padding:4px 9px; font-size:11px}
+  .card{padding:13px 14px}
+}
+@media (prefers-reduced-motion:reduce){*{transition:none !important} html{scroll-behavior:auto}}
+</style>
+<style id="planner-colors"></style>
+<style id="planner-custom-css"></style>
+
+<div class="toc" id="toc"><nav aria-label="Sections" id="tocnav"></nav></div>
+
+<header class="masthead">
+  <div class="wrap">
+    <p class="eyebrow" id="eyebrow"></p>
+    <h1 id="h1"></h1>
+    <p class="lede" id="lede"></p>
+    <dl class="statgrid" id="statgrid"></dl>
+  </div>
+</header>
+
+<div class="wrap">
+
+  <section id="patch" class="patch" data-toc="secPatch">
+    <div class="sechead"><h2 data-t="secPatch"></h2><p data-t="secPatchSub"></p></div>
+    <div class="pn" id="pn"></div>
+  </section>
+
+  <section id="progress" data-toc="secProgress">
+    <div class="sechead"><h2 data-t="secProgress"></h2><p data-t="secProgressSub"></p></div>
+    <div class="notices" data-for="progress"></div>
+    <p class="note" id="condNote" style="margin:-6px 0 16px" hidden></p>
+    <div class="meters" id="meters"></div>
+    <div class="meters" id="trackmeters" style="margin-top:12px"></div>
+    <p class="note" id="ruleNotes" style="margin-top:14px"></p>
+    <div id="priorWrap" hidden>
+      <h3 class="subhead" data-t="priorHead"></h3>
+      <div class="grid two" id="priorGrid"></div>
+    </div>
+  </section>
+
+  <section id="conditions" data-toc="secCondShort" hidden>
+    <div class="sechead"><h2 id="condTitle"></h2><p id="condSub"></p></div>
+    <div class="notices" data-for="conditions"></div>
+    <div class="grid two" id="condGrid"></div>
+  </section>
+
+  <section id="timetable" data-toc="secTT">
+    <div class="sechead"><h2 data-t="secTT"></h2><p data-t="secTTSub"></p></div>
+    <div class="notices" data-for="timetable"></div>
+    <div class="ttwrap"><div id="tt"></div></div>
+    <div class="ttkey" id="ttkey"></div>
+    <p class="note" id="blockList" style="margin-top:12px"></p>
+  </section>
+
+  <section id="catalog" data-toc="secCatShort">
+    <div class="sechead"><h2 id="catTitle"></h2><p id="catSub"></p></div>
+    <div class="notices" data-for="catalog"></div>
+    <div class="legend" id="legend"></div>
+    <p class="hint" id="catHint"></p>
+    <div class="toolbar">
+      <div class="tools">
+        <div class="toolrow filters">
+          <span class="fwrap"><select class="fsel" data-f="status" id="fStatus"></select></span>
+          <span class="fwrap"><select class="fsel" data-f="mine" id="fMine"></select></span>
+          <span class="fwrap fwrap-area"><select class="fsel" data-f="area" id="fArea"></select></span>
+          <span class="fwrap"><select class="fsel" data-f="kind" id="fKind"></select></span>
+          <span class="fwrap"><select class="fsel" data-f="group" id="fGroup"></select></span>
+          <button class="freset" id="resetF" hidden></button>
+        </div>
+        <div class="toolrow searchrow">
+          <input type="search" id="q">
+          <span class="count" id="count"></span>
+        </div>
+      </div>
+    </div>
+    <div class="grid" id="courseGrid"></div>
+  </section>
+
+  <section id="wishlist" data-toc="secWishShort">
+    <div class="sechead"><h2 data-t="secWish"></h2><p data-t="secWishSub"></p></div>
+    <div class="notices" data-for="wishlist"></div>
+    <div class="callout" id="turnusBox"></div>
+    <div class="grid" id="wishGrid"></div>
+    <div id="futWrap">
+      <h3 class="subhead" id="futHead"></h3>
+      <div class="grid two" id="futGrid"></div>
+    </div>
+  </section>
+
+  <section id="projects" data-toc="secProjShort" hidden>
+    <div class="sechead"><h2 id="projTitle"></h2><p id="projSub"></p></div>
+    <div class="notices" data-for="projects"></div>
+    <div class="grid two" id="projGrid"></div>
+  </section>
+
+  <section id="todo" data-toc="secTodo" hidden>
+    <div class="sechead"><h2 data-t="secTodo"></h2><p data-t="secTodoSub"></p></div>
+    <div class="notices" data-for="todo"></div>
+    <ol class="steps" id="todoList"></ol>
+  </section>
+
+  <section id="data" data-toc="secDataShort">
+    <div class="sechead"><h2 data-t="secData"></h2><p data-t="secDataSub"></p></div>
+    <div class="databar">
+      <span class="st" id="storeStatus"></span>
+      <button class="btn" id="exportBtn" data-t="btnExport"></button>
+      <button class="btn" id="importBtn" data-t="btnImport"></button>
+      <button class="btn danger" id="resetBtn" data-t="btnReset"></button>
+    </div>
+    <div class="importbox" id="importBox" hidden>
+      <textarea id="importText" spellcheck="false"></textarea>
+      <div class="row">
+        <input type="file" id="importFile" accept=".json,application/json">
+        <button class="btn" id="importGo" data-t="btnImportGo"></button>
+        <button class="btn" id="importCancel" data-t="btnCancel"></button>
+      </div>
+    </div>
+    <p class="note" style="margin-top:12px" data-t="dataNote"></p>
+  </section>
+
+  <footer id="footer"></footer>
+</div>
+
+<!-- ===== PLANNER CONFIG (programme rules, tracks, modules, colours, import recipe) ===== -->
+<script type="application/json" id="planner-config">
+{}
+</script>
+<!-- ===== PLANNER DATA (courses, patch notes, notices, open questions) ===== -->
+<script type="application/json" id="planner-data">
+{}
+</script>
+
+<script>
+/* Study Planner engine 1.1.0 — renders everything from #planner-config and #planner-data.
+   Content edits go into the two JSON blocks; this script stays the same across users. */
+(function(){
+"use strict";
+const $ = id => document.getElementById(id);
+function readJSON(id){
+  try{ const el=$(id); return el ? JSON.parse(el.textContent || "{}") : {}; }
+  catch(e){ console.error("planner: invalid JSON in #"+id, e); return {}; }
+}
+const CFG = readJSON("planner-config");
+const DATA = readJSON("planner-data");
+
+/* ===== i18n ===== */
+const L = {
+de:{
+  tocBrand:"Springe zu",
+  secPatch:"Patch Notes", secPatchSub:"Was sich zuletzt am Planer geändert hat, neueste zuerst",
+  nChanges:n=> n===1?"1 Änderung":n+" Änderungen",
+  secProgress:"Studienfortschritt", secProgressSub:"Bestanden · geplant · offen, gegen die Prüfungsordnung gerechnet",
+  condNotCounted:(lab,tot,cu)=>`<b>${lab} zählen nicht auf die ${tot} ${cu}.</b> Ihr Balken steht deshalb neben der Studienrechnung, nicht darin — das ist zusätzlicher Aufwand.`,
+  priorHead:"Bereits erbracht",
+  secCondShort:"Auflagen", condSub:(req,cu,dl)=>`${req} ${cu}`+(dl?`, nachzuweisen bis ${dl}`:""),
+  secTT:"Stundenplan", secTTSub:"Fest belegt und, gestrichelt, deine Kandidaten für dieses Semester",
+  ttEmpty:"Noch nichts auf „belege ich“ oder als Kandidat für dieses Semester gesetzt. Sobald du einen Kurs so markierst, erscheint er hier und wird gegen alles andere geprüft.",
+  ttGhost:"Kandidat", ttGhostBad:"Kandidat, kollidiert", ttShort:"vorgemerkt", clashTitle:"Überschneidung, siehe Kurskarte",
+  noSlot:"Ohne festen Wochentermin:", slotOpen:"Termin offen",
+  days:["Mo","Di","Mi","Do","Fr","Sa","So"],
+  secCatShort:"Kurskatalog", secCat:sem=>`Kurskatalog ${sem}`,
+  catSub:(n,ext,proj)=>`${n} Kurse`+(ext?` (davon ${ext} aus anderen Katalogen)`:"")+(proj?" · Projekte stehen weiter unten":""),
+  lgMust:"im Bescheid gefordert", lgGo:"dein Vorwissen reicht", lgCau:"kostet Einarbeitung", lgStop:"Vorkenntnis fehlt oder Teil II", lgNew:"seit diesem Datum im Planer",
+  stGo:"passt", stCau:"machbar", stStop:"gesperrt", stProj:"Pflichtmodul", condDefault:"Auflage",
+  catHint:"<b>Schwerpunkt und Modul in einer Liste.</b> Die Auswahl zeigt die Schwerpunkte und darunter eingerückt ihre Module — beides wählbar, jeweils mit der Trefferzahl unter deinen übrigen Filtern. Ein Klick auf einen Modul-Chip einer Karte filtert direkt darauf, ein zweiter hebt es auf. Mehrere Chips heißt: in mehreren Modulen anrechenbar.",
+  fStatusAll:"Alle Ampeln", fMineAll:"Jeder Status", fAreaAll:"Alle Schwerpunkte & Module", fKindAll:"Alle Arten",
+  fGroupNone:"Ohne Gruppierung", gKind:"nach Art", gTrack:"nach Schwerpunkt", gMod:"nach Modul", gSt:"nach Ampel", gRh:"nach Turnus",
+  aStatus:"Nach Ampel filtern", aMine:"Nach meinem Status filtern", aArea:"Nach Schwerpunkt oder Modul filtern", aKind:"Nach Veranstaltungsart filtern", aGroup:"Kurse gruppieren", aSearch:"Kurse durchsuchen",
+  resetF:"zurücksetzen", searchPh:"Suchen: Titel, Lehrende, Modul, Nummer …",
+  kind:{lecture:"Vorlesung", seminar:"Seminar", block:"Blockseminar", colloquium:"Kolloquium", other:"Sonstiges"},
+  kindPl:{lecture:"Vorlesungen", seminar:"Seminare", block:"Blockseminare", colloquium:"Kolloquien", other:"Sonstige Formate"},
+  sPlan:"belege ich", sWish:"Wunsch", sDone:"bestanden", sFail:"nicht best.",
+  mPlan:"belege ich", mWish:"Wunsch", mDone:"bestanden", mFail:"nicht bestanden", mNone:"noch offen",
+  lblTarget:"Ziel", lblGrade:"Note", lblArea:"Bereich", lblSem:"Semester",
+  noHits:"Keine Treffer. Filter zurücksetzen?",
+  groupCount:(n,lp,cu,multi)=>`${n} Kurse · ${lp} ${cu}`+(multi?` · ${multi} auch anderswo anrechenbar`:""),
+  groupRest:"Übrige", divTrack:l=>"Schwerpunkt · "+l, divNone:"Keinem Schwerpunkt zugeordnet",
+  gStLab:{must:"Auflagen", go:"Passt zu deinem Hintergrund", cau:"Machbar mit Einarbeitung", stop:"Gesperrt"},
+  secWishShort:"Wunschliste", secWish:"Wunschliste & kommende Semester", secWishSub:"Kandidaten für jetzt, Merkposten für später, plus wiederkehrende Kurse außerhalb dieses Semesters",
+  wishEmpty:sem=>`Noch nichts vorgemerkt. „Wunsch“ hält einen Kurs fest, ohne ihn zu belegen — mit Zielsemester <b>${sem}</b> als Kandidat für jetzt, mit einem späteren Semester als Merkposten. Kandidaten für dieses Semester erscheinen im Stundenplan gestrichelt, zählen aber nicht auf die Punkte.`,
+  wishNow:sem=>`Kandidaten für ${sem}`, wishNowSub:(n,lp,cu)=>`${n} Kurse · ${lp} ${cu}, noch nicht belegt`,
+  wishLater:"Für spätere Semester", nCourses:n=> n===1?"1 Kurs":n+" Kurse",
+  futHead:sem=>`Läuft nicht im ${sem} — Kandidaten für kommende Semester`, futWhen:sem=>`läuft nicht im ${sem}`,
+  forTarget:t=>"für "+t,
+  turnusBox:lms=>`<h3>Woher der Turnus kommt</h3><p><b>Zwei Quellen, in dieser Reihenfolge.</b> Wo die Lehrenden selbst angeben, ob der Kurs wiederkommt, gilt ihre Angabe — kräftig umrandet: <span class="pill p-rhx">wiederkehrend</span> <span class="pill p-rhx-un">unsicher</span> <span class="pill p-rhx-no">nur dieses Mal</span>. Der Originalsatz steht unter der Kursbeschreibung. Für alle übrigen ist die Angebotshistorie aus ${lms} gezählt; deren Chips sind blass.</p>`,
+  clashMsg:l=>"⚠ Überschneidung mit: "+l, ghostMsg:l=>"Als Kandidat notiert — läge auf: "+l, ghostMsgShort:l=>"Läge auf: "+l,
+  newChip:d=>"neu · "+d, newChipTitle:d=>`Seit ${d} im Planer — Details in den Patch Notes`,
+  lpPerSem:(lp,cu)=>`${lp} ${cu} / Sem.`,
+  secProjShort:"Projekte", projSub:"", projRunning:"läuft bereits", projStart:"Neustart",
+  secTodo:"Zu klären", secTodoSub:"Offene Fragen vor der Anmeldung — Geklärtes bleibt abgehakt stehen",
+  secDataShort:"Daten", secData:"Deine Daten", secDataSub:"Speicherort, Sicherung, Semesterwechsel",
+  btnExport:"Als JSON sichern", btnImport:"JSON einlesen", btnReset:"Alles zurücksetzen", btnResetArm:"Wirklich alles löschen? Nochmal klicken",
+  btnImportGo:"Einlesen", btnCancel:"Abbrechen", importPh:"Gesicherten JSON-Stand hier einfügen — oder unten eine Datei wählen.",
+  stChecking:"Gespeichert in diesem Browser. Datenbank wird gesucht …", stLocal:"Gespeichert in diesem Browser. Sichere regelmäßig als JSON.",
+  stDb:"Gespeichert in der Artefakt-Datenbank — geräteübergreifend verfügbar.", stDbFail:"Datenbank nicht erreichbar — es gilt der Browser-Speicher. Bitte als JSON sichern.",
+  stSaved:n=>"Sicherung gespeichert: "+n, stClip:"Speichern nicht möglich — der Stand liegt jetzt in der Zwischenablage.",
+  stNoSave:"Speichern nicht möglich. Kopiere den Stand über „JSON einlesen“ nicht — sichere ihn über die Zwischenablage.",
+  stImported:"Stand eingelesen.", stBadImport:"Das war kein gültiger JSON-Stand — nichts geändert.", stReset:"Zurückgesetzt.",
+  dataNote:"Kurse werden über einen aus dem Titel gebildeten Schlüssel wiedererkannt, mit der Veranstaltungsnummer als zweitem Anker. Beim nächsten Semester-Import findet die Seite deine Einträge dadurch wieder, auch wenn das Campus-System dem Kurs eine neue interne ID gibt. Die JSON-Sicherung gehört in deinen Uni-Ordner — sie ist das Einzige, was einen Verlust der Seite überlebt.",
+  stPassed:"Bestanden", stThisSem:"Dieses Semester", stCondOpen:l=>l+" offen", stAvg:"Notenschnitt", stCand:"Kandidaten jetzt", stWish:"Wunschliste gesamt", stClash:"Überschneidungen",
+  condComplete:"Vollständig nachgewiesen.", condRest:(n,cu,dl)=>`Noch ${n} ${cu}`+(dl?` bis ${dl}`:"")+".",
+  trackOver:(max,cu)=>`Über der Obergrenze von ${max} ${cu} — Module umverteilen.`, trackMinOk:"Erfüllt die Mindestanforderung.",
+  trackMinRest:(n,min,cu)=>`Bis zur Mindestanforderung (${min} ${cu} in einem Schwerpunkt) fehlen hier noch ${n} ${cu}.`, trackUpTo:(max,cu)=>`Bis zu ${max} ${cu} anrechenbar.`,
+  gate:(lab,v,need,cu)=>`<b>${lab}:</b> ${v} von ${need} ${cu} erbracht`+(v>=need?" — erfüllt.":`, es fehlen ${need-v} ${cu}.`),
+  bestOf:(lab,b,c)=>`<b>Optimierungspotenzial:</b> Mit der günstigsten Einbringung nach ${lab} läge dein Schnitt bei ${b} statt ${c}.`,
+  lede:"Kurskatalog des laufenden Semesters, Wunschliste für spätere Semester und dein Leistungsstand in einem. Der Katalog wird pro Semester neu eingelesen; was du zu einem Kurs festgehalten hast, bleibt dabei erhalten.",
+  disclaimer:"Ampel und Turnus sind Einschätzungen aus Kursbeschreibungen und gemessener Angebotshistorie, keine verbindliche Auskunft des Prüfungsamts. Für die Anrechnung gilt allein die Prüfungsordnung.",
+  counted:"gezählt: ", passedIn:s=>"bestanden "+s, noModule:"ohne Modul", noModuleLong:"Ohne Modulzuordnung",
+  renumbered:"neu unter dieser Nummer", details:"Details",
+  blockedDefault:"Gesperrt", blockMsg:l=>"Liegt in deiner Sperrzeit: "+l,
+  orphanChip:"nicht mehr im Katalog", orphanWhen:"nicht mehr im aktuellen Katalog", orphanHead:"Nicht mehr im Katalog", orphanSub:"Status bleibt gespeichert — auf „—“ setzen, um ihn zu entfernen",
+  rh:{"each-sem":"jedes Semester","each-ws":"jedes WiSe","each-ss":"jedes SoSe","yearly":"jährlich","repeat":"wird wiederholt",
+      "likely-ws":"voraussichtlich jedes WiSe","likely-ss":"voraussichtlich jedes SoSe","mostly-ws":"meist WiSe","mostly-ss":"meist SoSe",
+      "irregular":"unregelmäßig","unsure":"unklar","once":"nur dieses Mal","first":"erstmals erfasst"}
+},
+en:{
+  tocBrand:"Jump to",
+  secPatch:"Patch notes", secPatchSub:"What changed in the planner recently, newest first",
+  nChanges:n=> n===1?"1 change":n+" changes",
+  secProgress:"Progress", secProgressSub:"Passed · planned · open, checked against your examination regulations",
+  condNotCounted:(lab,tot,cu)=>`<b>${lab} do not count toward the ${tot} ${cu}.</b> Their bar sits next to the degree calculation, not inside it — this is extra workload.`,
+  priorHead:"Already completed",
+  secCondShort:"Conditions", condSub:(req,cu,dl)=>`${req} ${cu}`+(dl?`, due by ${dl}`:""),
+  secTT:"Timetable", secTTSub:"Booked courses and, dashed, your candidates for this term",
+  ttEmpty:"Nothing is set to “taking” or shortlisted for this term yet. As soon as you mark a course that way it shows up here and is checked against everything else.",
+  ttGhost:"Candidate", ttGhostBad:"Candidate, clashes", ttShort:"shortlisted", clashTitle:"Clash — see the course card",
+  noSlot:"No weekly slot:", slotOpen:"Time TBA",
+  days:["Mon","Tue","Wed","Thu","Fri","Sat","Sun"],
+  secCatShort:"Catalogue", secCat:sem=>`Course catalogue ${sem}`,
+  catSub:(n,ext,proj)=>`${n} courses`+(ext?` (${ext} from other catalogues)`:"")+(proj?" · projects are further down":""),
+  lgMust:"required by your admission", lgGo:"your background covers it", lgCau:"needs catching up", lgStop:"missing prerequisite or part II", lgNew:"added to the planner on this date",
+  stGo:"fits", stCau:"doable", stStop:"blocked", stProj:"required", condDefault:"Condition",
+  catHint:"<b>Tracks and modules in one list.</b> The selector shows each track with its modules indented below — both are selectable, each with the number of matches under your other filters. Clicking a module chip on a card filters to it, a second click clears it. Several chips mean the course counts in several modules.",
+  fStatusAll:"All ratings", fMineAll:"Any status", fAreaAll:"All tracks & modules", fKindAll:"All formats",
+  fGroupNone:"No grouping", gKind:"by format", gTrack:"by track", gMod:"by module", gSt:"by rating", gRh:"by frequency",
+  aStatus:"Filter by rating", aMine:"Filter by my status", aArea:"Filter by track or module", aKind:"Filter by format", aGroup:"Group courses", aSearch:"Search courses",
+  resetF:"reset", searchPh:"Search: title, lecturer, module, number …",
+  kind:{lecture:"Lecture", seminar:"Seminar", block:"Block course", colloquium:"Colloquium", other:"Other"},
+  kindPl:{lecture:"Lectures", seminar:"Seminars", block:"Block courses", colloquium:"Colloquia", other:"Other formats"},
+  sPlan:"taking", sWish:"wish", sDone:"passed", sFail:"failed",
+  mPlan:"taking", mWish:"wish", mDone:"passed", mFail:"failed", mNone:"not set",
+  lblTarget:"Target", lblGrade:"Grade", lblArea:"Area", lblSem:"Term",
+  noHits:"No matches. Reset the filters?",
+  groupCount:(n,lp,cu,multi)=>`${n} courses · ${lp} ${cu}`+(multi?` · ${multi} also count elsewhere`:""),
+  groupRest:"Other", divTrack:l=>"Track · "+l, divNone:"No track",
+  gStLab:{must:"Conditions", go:"Fits your background", cau:"Doable with catching up", stop:"Blocked"},
+  secWishShort:"Wishlist", secWish:"Wishlist & upcoming terms", secWishSub:"Candidates for now, notes for later, plus recurring courses outside this term",
+  wishEmpty:sem=>`Nothing shortlisted yet. “Wish” keeps a course without booking it — with target term <b>${sem}</b> as a candidate for now, with a later term as a note for later. Candidates for this term show up dashed in the timetable but don't count toward your credits.`,
+  wishNow:sem=>`Candidates for ${sem}`, wishNowSub:(n,lp,cu)=>`${n} courses · ${lp} ${cu}, not booked yet`,
+  wishLater:"For later terms", nCourses:n=> n===1?"1 course":n+" courses",
+  futHead:sem=>`Not offered in ${sem} — candidates for upcoming terms`, futWhen:sem=>`not offered in ${sem}`,
+  forTarget:t=>"for "+t,
+  turnusBox:lms=>`<h3>Where the frequency comes from</h3><p><b>Two sources, in this order.</b> Where the lecturers state themselves whether the course comes back, their answer wins — strong outline: <span class="pill p-rhx">recurring</span> <span class="pill p-rhx-un">unsure</span> <span class="pill p-rhx-no">this time only</span>. Their original sentence is shown under the description. For everything else the offering history in ${lms} was counted; those chips are pale.</p>`,
+  clashMsg:l=>"⚠ Clashes with: "+l, ghostMsg:l=>"Shortlisted — would sit on: "+l, ghostMsgShort:l=>"Would sit on: "+l,
+  newChip:d=>"new · "+d, newChipTitle:d=>`In the planner since ${d} — details in the patch notes`,
+  lpPerSem:(lp,cu)=>`${lp} ${cu} / term`,
+  secProjShort:"Projects", projSub:"", projRunning:"already running", projStart:"new start",
+  secTodo:"To clarify", secTodoSub:"Open questions before registration — resolved ones stay ticked off",
+  secDataShort:"Data", secData:"Your data", secDataSub:"Storage, backup, term change",
+  btnExport:"Save as JSON", btnImport:"Load JSON", btnReset:"Reset everything", btnResetArm:"Really delete everything? Click again",
+  btnImportGo:"Load", btnCancel:"Cancel", importPh:"Paste a saved JSON state here — or pick a file below.",
+  stChecking:"Saved in this browser. Looking for the database …", stLocal:"Saved in this browser. Back up as JSON regularly.",
+  stDb:"Saved in the artifact database — available on all your devices.", stDbFail:"Database unreachable — browser storage is used. Please back up as JSON.",
+  stSaved:n=>"Backup saved: "+n, stClip:"Saving isn't possible here — the state is now on your clipboard.",
+  stNoSave:"Saving isn't possible here and the clipboard is blocked.",
+  stImported:"State loaded.", stBadImport:"That wasn't a valid JSON state — nothing changed.", stReset:"Reset done.",
+  dataNote:"Courses are recognised by a key built from their title, with the course number as a second anchor. When next term's catalogue is imported, the page finds your entries again even if the campus system gives the course a new internal ID. Keep the JSON backup in your uni folder — it is the only thing that survives losing the page.",
+  stPassed:"Passed", stThisSem:"This term", stCondOpen:l=>l+" open", stAvg:"Average", stCand:"Candidates now", stWish:"Wishlist total", stClash:"Clashes",
+  condComplete:"Fully completed.", condRest:(n,cu,dl)=>`${n} ${cu} left`+(dl?`, due by ${dl}`:"")+".",
+  trackOver:(max,cu)=>`Above the cap of ${max} ${cu} — move modules elsewhere.`, trackMinOk:"Meets the minimum requirement.",
+  trackMinRest:(n,min,cu)=>`${n} ${cu} short of the minimum (${min} ${cu} in one track).`, trackUpTo:(max,cu)=>`Up to ${max} ${cu} count.`,
+  gate:(lab,v,need,cu)=>`<b>${lab}:</b> ${v} of ${need} ${cu} completed`+(v>=need?" — met.":`, ${need-v} ${cu} missing.`),
+  bestOf:(lab,b,c)=>`<b>Room to optimise:</b> with the most favourable selection under ${lab} your average would be ${b} instead of ${c}.`,
+  lede:"This term's course catalogue, a wishlist for later terms and your progress in one place. The catalogue is re-imported every term; whatever you recorded for a course is kept.",
+  disclaimer:"Ratings and frequency are estimates from course descriptions and the measured offering history, not a binding statement by the examination office. Only the examination regulations decide what counts.",
+  counted:"counted: ", passedIn:s=>"passed "+s, noModule:"no module", noModuleLong:"No module assignment",
+  renumbered:"new under this number", details:"Details",
+  blockedDefault:"Blocked", blockMsg:l=>"Falls in your blocked time: "+l,
+  orphanChip:"no longer in catalogue", orphanWhen:"not in the current catalogue", orphanHead:"No longer in the catalogue", orphanSub:"status is kept — set it to “—” to remove it",
+  rh:{"each-sem":"every term","each-ws":"every winter","each-ss":"every summer","yearly":"yearly","repeat":"will be repeated",
+      "likely-ws":"likely every winter","likely-ss":"likely every summer","mostly-ws":"mostly winter","mostly-ss":"mostly summer",
+      "irregular":"irregular","unsure":"unsure","once":"this time only","first":"first time recorded"}
+}};
+const LANG = (()=>{ let l=String(CFG.lang||"de").toLowerCase(); if(l==="auto") l=(navigator.language||"en").slice(0,2).toLowerCase(); return L[l]?l:"en"; })();
+document.documentElement.lang = LANG;
+const T = (k,...a)=>{ const v = (L[LANG][k] !== undefined ? L[LANG][k] : L.en[k]); if(v===undefined) return k; return typeof v==="function" ? v(...a) : v; };
+const CU = CFG.creditUnit || (LANG==="de" ? "LP" : "ECTS");
+
+/* ===== helpers ===== */
+const esc = s => String(s==null?"":s).replace(/[&<>"']/g, ch=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[ch]));
+const attr = s => esc(s).replace(/\n/g," ");
+const strip = s => String(s||"").replace(/<[^>]*>/g," ");
+const num = n => { const r=Math.round((+n||0)*100)/100; return LANG==="de" ? String(r).replace(".",",") : String(r); };
+const cssId = s => String(s||"x").replace(/[^A-Za-z0-9_-]/g,"_");
+function fmtDate(v, short){
+  if(!v) return "";
+  const m=/^(\d{4})-(\d{2})-(\d{2})/.exec(String(v)); if(!m) return String(v);
+  const d=new Date(+m[1], +m[2]-1, +m[3]);
+  try{ return d.toLocaleDateString(LANG==="de"?"de-DE":"en-GB", short?{day:"2-digit",month:(LANG==="de"?"2-digit":"short")}:{day:"2-digit",month:(LANG==="de"?"2-digit":"short"),year:"numeric"}); }
+  catch(e){ return String(v); }
+}
+function expired(until){ if(!until) return false; const t=Date.parse(until.length<=10? until+"T23:59:59" : until); return !isNaN(t) && t < Date.now(); }
+/* Stable key: slug of the title (part numbers stripped), cut at 64 characters. Same function as the
+   original CogSci planner, so saved states keep working. Collisions get the course number appended. */
+const slug = s => String(s||"").toLowerCase()
+  .replace(/ä/g,"ae").replace(/ö/g,"oe").replace(/ü/g,"ue").replace(/ß/g,"ss")
+  .replace(/\(part\s*[ivx0-9]+\)/g,"").replace(/\(teil\s*[ivx0-9]+\)/g,"")
+  .replace(/[^a-z0-9]+/g,"-").replace(/^-+|-+$/g,"").slice(0,64);
+
+/* ===== configuration ===== */
+const SEM_NOW = CFG.semesterNow || "";
+const SEM_SHORT = CFG.semesterShort || SEM_NOW;
+const TARGETS = (CFG.targets && CFG.targets.length) ? CFG.targets : [SEM_NOW, LANG==="de"?"später":"later"];
+const AREAS = (CFG.areas||[]).map(a=>({countsToTotal:true, graded:true, ...a}));
+const AREA = Object.fromEntries(AREAS.map(a=>[a.id,a]));
+const TRACKS = CFG.tracks||[];
+const TRK = Object.fromEntries(TRACKS.map(t=>[t.id,t]));
+const COND = (CFG.conditions && CFG.conditions.enabled!==false && (CFG.conditions.required||(DATA.conditions||[]).length)) ? {id:"AUFL", countsToTotal:false, ...CFG.conditions} : null;
+const COND_ID = COND ? COND.id : "AUFL";
+const COND_LAB = COND ? (COND.label || T("condDefault")) : T("condDefault");
+const COND_PL = COND ? (COND.labelPlural || COND_LAB) : COND_LAB;
+const PROJ = (CFG.projects && (DATA.projects||[]).length) ? CFG.projects : null;
+const MODS = CFG.modules || {};
+const MODORDER = (CFG.moduleOrder && CFG.moduleOrder.length) ? CFG.moduleOrder : Object.keys(MODS);
+const MODPREFIX = CFG.modulePrefix || "";
+const EXT = CFG.extCatalogs || {};
+const TR_RULE = CFG.trackRule || null;
+const BLOCKED = (CFG.blocked||[]).filter(b=>b && b.d && b.s && b.e);
+const LMS = (CFG.lms && CFG.lms.name) || (LANG==="de"?"dem Vorlesungsverzeichnis":"the course catalogue");
+
+const kindOf = k => {
+  const s=String(k||"");
+  if(/block/i.test(s)) return "block";
+  if(/^(Vorlesung|Lecture|VL\b|Ringvorlesung)/i.test(s)) return "lecture";
+  if(/seminar/i.test(s)) return "seminar";
+  if(/kolloq|colloq/i.test(s)) return "colloquium";
+  return "other";
+};
+function parseMods(c){
+  if(Array.isArray(c.mods)) return c.mods.slice();
+  const m=c.mod; if(!m) return [];
+  if(/^\s*(keine|none|kein|—|-)\b/i.test(m) || /^\s*—\s*$/.test(m)) return ["—"];
+  const out=[];
+  String(m).split(/\s*[·|]\s*/).map(s=>s.trim()).filter(Boolean).forEach(p=>{
+    let code=p;
+    if(!MODS[p] && MODPREFIX && MODS[MODPREFIX+p]) code=MODPREFIX+p;
+    if(!out.includes(code)) out.push(code);
+  });
+  return out;
+}
+const modTrack = m => (MODS[m] && MODS[m].track) || null;
+const modArea  = m => (MODS[m] && MODS[m].area) || null;
+const modLabel = m => m==="—" ? T("noModuleLong") : ((MODS[m] && MODS[m].label) || m);
+const modChip  = (m,short) => m==="—" ? T("noModule")
+  : (MODS[m] && MODS[m].short) ? MODS[m].short
+  : (short && MODPREFIX && m.indexOf(MODPREFIX)===0) ? m.slice(MODPREFIX.length) : m;
+const modOpt   = m => m==="—" ? T("noModuleLong") : (modChip(m,true)+(MODS[m]&&MODS[m].label&&MODS[m].label!==modChip(m,true)?" · "+MODS[m].label:""));
+
+/* ===== courses ===== */
+const ALL=[], byKey={}, DUPES=[];
+function norm(c, src){
+  c.src=src;
+  if(src==="cond") c.cond=true;
+  c.mods=parseMods(c);
+  if(!c.track) c.track = c.mods.map(modTrack).find(Boolean) || null;
+  if(!c.st) c.st = c.cond ? "must" : src==="project" ? "proj" : "go";
+  c.kind = c.kind || kindOf(c.k);
+  c.slots = Array.isArray(c.slots) ? c.slots.filter(s=>s && s.d && s.s && s.e) : [];
+  return c;
+}
+function defaultArea(c){
+  if(!c) return null;
+  if(c.cond) return COND_ID;
+  if(c.area) return c.area;
+  if(c.src==="project" && PROJ && PROJ.area) return PROJ.area;
+  for(const m of (c.mods||[])){ const a=modArea(m); if(a) return a; }
+  if(c.track && TRK[c.track] && TRK[c.track].area) return TRK[c.track].area;
+  return CFG.defaultArea || (AREAS[0] && AREAS[0].id) || null;
+}
+const PRIOR=(DATA.prior||[]), CONDS=(DATA.conditions||[]), CAT=(DATA.courses||[]), FUT=(DATA.future||[]);
+const PROJS=(DATA.projects||[]), PROJ_OPEN=PROJS.filter(p=>p.open!==false);
+PRIOR.forEach(c=>norm(c,"prior")); CONDS.forEach(c=>norm(c,"cond")); CAT.forEach(c=>norm(c,"course"));
+FUT.forEach(c=>norm(c,"future")); PROJ_OPEN.forEach(c=>norm(c,"project"));
+[...PRIOR,...CONDS,...CAT,...FUT,...PROJ_OPEN].forEach((c,i)=>{
+  let k = c.key || slug(c.t) || ("course-"+i);
+  if(byKey[k]){
+    const k2 = k.slice(0,56)+"-"+(slug(c.nr)||i);
+    DUPES.push({key:k, a:byKey[k].t, b:c.t, now:k2});
+    console.warn("planner: duplicate key", k, "—", c.t, "gets", k2, "(set an explicit key in the data)");
+    k=k2;
+  }
+  c.key=k; byKey[k]=c; ALL.push(c);
+});
+window.PLANNER = {CFG, DATA, ALL, byKey, DUPES, defaultArea};
+
+/* ===== colours: one per track (and per area / conditions), light and dark ===== */
+const PALETTE={
+  teal:["#d2e8e9","#0d666c","#0f383c","#4ec6cc"], orange:["#fde6d5","#f07c19","#3d2410","#f29a52"],
+  yellow:["#faefc7","#b8860b","#33290c","#e2bf5a"], green:["#dbf5b3","#6aa51d","#243312","#9fd65a"],
+  pink:["#f7dde8","#a53a6b","#3a1a2a","#e88ab5"], purple:["#dcc3ea","#6f3596","#2d1f3a","#b98ad9"],
+  blue:["#dbe8f5","#1f5f96","#122636","#83b9e8"], slate:["#e4e6ee","#4c5670","#23283a","#9aa5c7"],
+  brown:["#efe3d3","#7a5230","#2f2418","#c9a27a"], cyan:["#d4eef7","#0b7fa3","#0f2f3a","#5cc6e8"],
+  olive:["#ebeccb","#6b6d12","#2a2b10","#c3c56a"], rose:["#fbe0e4","#b8325a","#3b1621","#f08aa6"]
+};
+const colorOf = c => { if(!c) return null; if(typeof c==="string") return PALETTE[c]||null;
+  if(c.bg&&c.line) return [c.bg, c.line, c.bgDark||c.bg, c.lineDark||c.line]; return null; };
+(function(){
+  const defs=[]; // [className, colour]
+  const fallback=["teal","orange","yellow","pink","purple","cyan","brown","olive","rose","slate"];
+  TRACKS.forEach((t,i)=>defs.push(["tr-"+cssId(t.id), colorOf(t.color)||PALETTE[fallback[i%fallback.length]]]));
+  AREAS.forEach(a=>defs.push(["ar-"+cssId(a.id), colorOf(a.color)||PALETTE.slate]));
+  defs.push(["c-cond", colorOf(COND&&COND.color)||PALETTE.green]);
+  const v=(cls,i)=>`--${cls}-bg:${i[0]};--${cls}-line:${i[1]};`;
+  const vd=(cls,i)=>`--${cls}-bg:${i[2]};--${cls}-line:${i[3]};`;
+  let css=":root{"+defs.map(([c,i])=>v(c,i)).join("")+"}\n";
+  const dark=defs.map(([c,i])=>vd(c,i)).join("");
+  css+=`@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){${dark}}}\n:root[data-theme="dark"]{${dark}}\n`;
+  defs.forEach(([c])=>{ css+=`.ev.${c},.ttkey i.${c}{background:var(--${c}-bg);border-color:var(--${c}-line)}\n.pill i.dot.${c}{background:var(--${c}-bg);border-color:var(--${c}-line)}\n`; });
+  $("planner-colors").textContent=css;
+  if(CFG.customCss) $("planner-custom-css").textContent=String(CFG.customCss);
+})();
+const evClass = c => c.cond ? "c-cond" : c.track ? "tr-"+cssId(c.track) : "ar-"+cssId(defaultArea(c));
+
+/* ===== state ===== */
+const STORE_KEY = CFG.storageKey || ("study-planner-"+(slug(CFG.program||CFG.title||"plan")||"plan"));
+let ST={courses:{}, seeded:[]};
+try{ const raw=localStorage.getItem(STORE_KEY); if(raw){ const d=JSON.parse(raw); if(d&&d.courses) ST={courses:d.courses, seeded:d.seeded||[]}; } }catch(e){}
+const rec = k => ST.courses[k] || null;
+/* database snapshots are frozen — always clone before editing, update immutably */
+const clone = o => { try{ return JSON.parse(JSON.stringify(o||{})); }catch(e){ return {}; } };
+function seedPrior(){
+  let changed=false;
+  PRIOR.forEach(p=>{
+    if(p.seed===false || ST.seeded.includes(p.key)) return;
+    if(!ST.courses[p.key]) ST.courses={...ST.courses, [p.key]:{s:p.status||"done", g:(p.g!=null?p.g:null), lp:(p.lp!=null?p.lp:null), area:defaultArea(p), sem:p.sem||""}};
+    ST.seeded=[...ST.seeded, p.key]; changed=true;
+  });
+  return changed;
+}
+seedPrior();
+let dbRef=null;
+function persist(){
+  try{ localStorage.setItem(STORE_KEY, JSON.stringify(ST)); }catch(e){}
+  if(dbRef) dbRef.set({courses:ST.courses, seeded:ST.seeded, updatedAt:Date.now()}).catch(()=>{});
+}
+
+/* ===== progress against the regulations ===== */
+function entries(state){
+  const out=[];
+  for(const [k,r] of Object.entries(ST.courses)){
+    if(state && r.s!==state) continue;
+    const c=byKey[k];
+    const area = r.s==="done" ? (r.area || defaultArea(c)) : (c ? defaultArea(c) : r.area);
+    out.push({k, r, c, t:c?c.t:k, lp:(r.lp!=null ? +r.lp : (c&&c.lp ? +c.lp : 0)), area, track:c?c.track:null});
+  }
+  return out;
+}
+const sum = (arr,f) => arr.filter(f).reduce((a,x)=>a+(x.lp||0),0);
+function progress(){
+  const done=entries("done"), plan=entries("plan");
+  const p={done, plan, area:{}, track:{}};
+  AREAS.forEach(a=>{ p.area[a.id]={done:sum(done,x=>x.area===a.id), plan:sum(plan,x=>x.area===a.id)}; });
+  if(COND) p.area[COND_ID]={done:sum(done,x=>x.area===COND_ID), plan:sum(plan,x=>x.area===COND_ID)};
+  /* track bars count "taking" as well as "passed" (user feedback, 09.09.2026) */
+  if(TR_RULE){
+    TRACKS.filter(t=>!TR_RULE.area || t.area===TR_RULE.area || !t.area).forEach(t=>{
+      p.track[t.id]={done:sum(done,x=>x.track===t.id && (!TR_RULE.area || x.area===TR_RULE.area)),
+                     plan:sum(plan,x=>x.track===t.id && (!TR_RULE.area || x.area===TR_RULE.area))};
+    });
+  }
+  const counts = id => (AREA[id] && AREA[id].countsToTotal!==false) || (COND && id===COND_ID && COND.countsToTotal);
+  p.totalDone = sum(done, x=>counts(x.area));
+  p.planNow = sum(plan, ()=>true);
+  const gradedArea = id => AREA[id] ? AREA[id].graded!==false : false;
+  const graded = done.filter(x=>gradedArea(x.area) && typeof x.r.g==="number" && x.r.g>0);
+  const gl=graded.reduce((a,x)=>a+x.lp,0);
+  p.avg = gl ? graded.reduce((a,x)=>a+x.r.g*x.lp,0)/gl : null;
+  const B=CFG.bestOf;
+  if(B && B.area && p.avg!=null){
+    const lower = !(CFG.grades && CFG.grades.higherIsBetter);
+    const pool=done.filter(x=>x.area===B.area && typeof x.r.g==="number" && x.r.g>0).sort((a,b)=>lower?a.r.g-b.r.g:b.r.g-a.r.g);
+    const cap={}, picked=[]; let lp=0;
+    for(const x of pool){
+      if(lp>=B.credits) break;
+      if(B.respectTrackMax && TR_RULE && TR_RULE.maxPerTrack && x.track){
+        if((cap[x.track]||0)+x.lp>TR_RULE.maxPerTrack) continue;
+        cap[x.track]=(cap[x.track]||0)+x.lp;
+      }
+      lp+=x.lp; picked.push(x);
+    }
+    const extra=done.filter(x=>(B.alsoAreas||[]).includes(x.area) && typeof x.r.g==="number" && x.r.g>0);
+    const best=[...picked,...extra]; const bl=best.reduce((a,x)=>a+x.lp,0);
+    p.best = bl ? best.reduce((a,x)=>a+x.r.g*x.lp,0)/bl : null;
+  }
+  if(CFG.thesisGate){ const G=CFG.thesisGate; p.gate=sum(done,x=>(G.areas||[]).includes(x.area)); }
+  return p;
+}
+function meter(label, done, plan, soll, opts){
+  opts=opts||{};
+  const dPct=Math.min(100, soll?done/soll*100:0), pPct=Math.min(100-dPct, soll?plan/soll*100:0);
+  return `<div class="meter ${opts.cls||""}">
+    <div class="mt"><b>${esc(label)}</b><span>${num(done)}${plan?" +"+num(plan):""} / ${num(soll)} ${CU}</span></div>
+    <div class="bar"><i class="${done>soll&&opts.overIsBad?"over":""}" style="width:${dPct}%"></i><i class="plan" style="width:${pPct}%"></i></div>
+    ${opts.note?`<small>${opts.note}</small>`:""}
+  </div>`;
+}
+function renderProgress(){
+  const p=progress();
+  let html="";
+  if(COND){
+    const d=p.area[COND_ID].done, rest=Math.max(0,(COND.required||0)-d);
+    html+=meter(COND.meterLabel||COND_PL, d, p.area[COND_ID].plan, COND.required||0,
+      {cls:rest<=0?"ok":"", note: rest<=0 ? T("condComplete") : T("condRest", num(rest), CU, COND.deadline)});
+    const cn=$("condNote");
+    if(COND.countsToTotal===false && CFG.totalCredits){ cn.innerHTML=T("condNotCounted", esc(COND_PL), CFG.totalCredits, CU); cn.hidden=false; }
+  }
+  AREAS.filter(a=>a.required && !a.noCourses).forEach(a=>{
+    html+=meter(a.label, p.area[a.id].done, p.area[a.id].plan, a.required, {note:a.note||"", cls: p.area[a.id].done>=a.required?"ok":""});
+  });
+  $("meters").innerHTML=html;
+
+  let th="";
+  if(TR_RULE){
+    const anyMin = TR_RULE.minInOne ? Object.values(p.track).some(v=>v.done>=TR_RULE.minInOne) : false;
+    TRACKS.filter(t=>p.track[t.id]).forEach(t=>{
+      const v=p.track[t.id].done, vp=p.track[t.id].plan, max=TR_RULE.maxPerTrack, min=TR_RULE.minInOne;
+      let cls="", note="";
+      if(max && v>max){ cls="warn"; note=T("trackOver", max, CU); }
+      else if(min && v>=min){ cls="ok"; note=T("trackMinOk"); }
+      else if(min && !anyMin){ note=T("trackMinRest", num(min-v), min, CU); }
+      else if(max){ note=T("trackUpTo", max, CU); }
+      th+=meter(t.short||t.label, v, vp, max||min||0, {cls, note, overIsBad:!!max});
+    });
+  }
+  $("trackmeters").innerHTML=th; $("trackmeters").hidden=!th;
+
+  const rules=[];
+  if(CFG.thesisGate) rules.push(T("gate", esc(CFG.thesisGate.label||"Thesis"), p.gate, CFG.thesisGate.credits, CU));
+  if(CFG.gradeNote) rules.push(CFG.gradeNote);
+  if(p.best!=null && p.avg!=null && Math.abs(p.best-p.avg)>0.005) rules.push(T("bestOf", esc(CFG.bestOf.label||""), num(p.best), num(p.avg)));
+  $("ruleNotes").innerHTML=rules.join("<br>"); $("ruleNotes").hidden=!rules.length;
+
+  const condRest = COND ? Math.max(0,(COND.required||0)-p.area[COND_ID].done) : 0;
+  const stat=[[T("stPassed"), num(p.totalDone)+(CFG.totalCredits?` <small>/ ${CFG.totalCredits} ${CU}</small>`:` <small>${CU}</small>`), ""],
+              [T("stThisSem"), num(p.planNow)+` <small>${CU}</small>`, ""]];
+  if(COND) stat.push([T("stCondOpen", COND_PL), num(condRest)+` <small>${CU}</small>`, condRest>0?"warn":""]);
+  stat.push([T("stAvg"), p.avg!=null?num(p.avg):"—", ""], [T("stCand"), kandidaten().length, ""],
+            [T("stWish"), entries("wish").length, ""], [T("stClash"), clashCount(), clashCount()>0?"warn":""]);
+  $("statgrid").innerHTML=stat.map(([k,v,c])=>`<div class="${c}"><dt>${k}</dt><dd>${v}</dd></div>`).join("");
+}
+
+/* ===== slots & clashes ===== */
+const mins = s => { const [h,m]=String(s).split(":").map(Number); return h*60+(m||0); };
+const planned = () => Object.entries(ST.courses).filter(([k,r])=>r.s==="plan").map(([k])=>byKey[k]).filter(Boolean);
+function overlaps(a,b){
+  for(const x of (a.slots||[])) for(const y of (b.slots||[]))
+    if(x.d===y.d && mins(x.s)<mins(y.e) && mins(y.s)<mins(x.e)) return true;
+  return false;
+}
+function clashesFor(key){
+  const c=byKey[key]; if(!c || !rec(key) || rec(key).s!=="plan") return [];
+  return planned().filter(o=>o.key!==key && overlaps(c,o)).map(o=>o.t);
+}
+const isKandidat = key => { const r=rec(key); return !!(r && r.s==="wish" && (r.tgt||SEM_NOW)===SEM_NOW); };
+/* the student's own fixed times (job, commute …) from config.blocked */
+function blockedFor(c){
+  if(!c || !c.slots || !c.slots.length || !BLOCKED.length) return [];
+  const hit=new Set();
+  c.slots.forEach(x=>BLOCKED.forEach(b=>{ if(+x.d===+b.d && mins(x.s)<mins(b.e) && mins(b.s)<mins(x.e)) hit.add(b.label||T("blockedDefault")); }));
+  return [...hit];
+}
+function ghostClashes(key){
+  const c=byKey[key]; if(!c || !isKandidat(key)) return [];
+  return planned().filter(o=>o.key!==key && overlaps(c,o)).map(o=>o.t).concat(blockedFor(c));
+}
+const kandidaten = () => Object.keys(ST.courses).filter(isKandidat).map(k=>byKey[k]).filter(c=>c && c.src!=="future");
+function clashCount(){
+  const p=planned(); let n=0;
+  for(let i=0;i<p.length;i++) for(let j=i+1;j<p.length;j++) if(overlaps(p[i],p[j])) n++;
+  return n;
+}
+function renderTT(){
+  const picked=planned();
+  const ghosts=kandidaten().filter(c=>c.slots.length);
+  const timed=picked.filter(c=>c.slots.length);
+  const blocks=picked.filter(c=>!c.slots.length);
+  const tt=$("tt");
+  if(!timed.length && !ghosts.length && !BLOCKED.length){
+    tt.className=""; tt.style.cssText=""; tt.innerHTML=`<p class="empty-tt">${T("ttEmpty")}</p>`;
+  } else {
+    const all=[...timed,...ghosts].flatMap(c=>c.slots).concat(BLOCKED);
+    const maxDay=Math.max(5, ...all.map(s=>+s.d));
+    const h0=Math.min(8, ...all.map(s=>Math.floor(mins(s.s)/60)));
+    const h1=Math.max(20, ...all.map(s=>Math.ceil(mins(s.e)/60)));
+    const T0=h0*60, T1=h1*60, PXH=46, H=(T1-T0)/60*PXH;
+    const DAYS=T("days").slice(0,maxDay);
+    tt.className="tt"; tt.style.gridTemplateColumns=`52px repeat(${DAYS.length},1fr)`; tt.style.minWidth=(140*DAYS.length)+"px";
+    let html=`<div class="hd"></div>`+DAYS.map(d=>`<div class="hd">${d}</div>`).join("");
+    let hours=`<div class="hours" style="height:${H}px">`;
+    for(let h=h0;h<=h1;h++) hours+=`<div class="hourline" style="top:${(h*60-T0)/60*PXH}px"></div><div class="hourlab" style="top:${(h*60-T0)/60*PXH}px">${h}</div>`;
+    html+=hours+`</div>`;
+    for(let d=1; d<=DAYS.length; d++){
+      let col=`<div class="col" style="height:${H}px">`;
+      for(let h=h0;h<=h1;h++) col+=`<div class="hourline" style="top:${(h*60-T0)/60*PXH}px"></div>`;
+      BLOCKED.filter(b=>+b.d===d).forEach(b=>{
+        const top=(mins(b.s)-T0)/60*PXH, hgt=Math.max(20,(mins(b.e)-mins(b.s))/60*PXH);
+        col+=`<div class="ev blocked" style="top:${top}px;height:${hgt}px" title="${attr((b.label||T("blockedDefault"))+" "+b.s+"–"+b.e)}"><b>${esc(b.label||T("blockedDefault"))}</b><span>${esc(b.s)}–${esc(b.e)}</span></div>`;
+      });
+      const evs=[];
+      timed.forEach(c=>c.slots.filter(x=>+x.d===d).forEach(x=>evs.push({c, s:x, ghost:false, bad:clashesFor(c.key).length>0, a:mins(x.s), b:mins(x.e)})));
+      ghosts.forEach(c=>c.slots.filter(x=>+x.d===d).forEach(x=>evs.push({c, s:x, ghost:true, bad:ghostClashes(c.key).length>0, a:mins(x.s), b:mins(x.e)})));
+      evs.sort((p,q)=>p.a-q.a || p.b-q.b);
+      /* overlapping slots sit side by side instead of on top of each other */
+      let cluster=[], clusterEnd=-1;
+      const flush=()=>{
+        if(!cluster.length) return;
+        const ends=[];
+        cluster.forEach(e=>{ let i=ends.findIndex(end=>end<=e.a); if(i<0){ i=ends.length; ends.push(e.b); } else ends[i]=e.b; e.col=i; });
+        const n=Math.max(...cluster.map(e=>e.col))+1; cluster.forEach(e=>{ e.n=n; });
+        cluster=[]; clusterEnd=-1;
+      };
+      evs.forEach(e=>{ if(cluster.length && e.a>=clusterEnd) flush(); cluster.push(e); clusterEnd=Math.max(clusterEnd,e.b); });
+      flush();
+      evs.forEach(e=>{
+        const n=e.n||1, i=e.col||0, w=100/n, left=i*w;
+        const top=(e.a-T0)/60*PXH, hgt=Math.max(26,(e.b-e.a)/60*PXH-3);
+        const style=`top:${top}px;height:${hgt}px;left:calc(${left}% + 3px);width:calc(${w}% - 6px);right:auto`;
+        const lim=n>1?18:34, label=e.c.t.length>lim ? e.c.t.slice(0,lim-1)+"…" : e.c.t;
+        col+= e.ghost
+          ? `<div class="ev ghost ${e.bad?"bad":""}" style="${style}" title="${attr(T("ttShort")+": "+e.c.t)}"><b>${esc(label)}</b><span>${T("ttShort")} · ${esc(e.s.s)}</span></div>`
+          : `<div class="ev ${evClass(e.c)}" style="${style}" title="${attr(e.c.t+(e.bad?" — "+T("clashTitle"):""))}"><b>${esc(label)}</b><span>${esc(e.s.s)}–${esc(e.s.e)}${e.c.lp?" · "+num(e.c.lp)+" "+CU:""}</span></div>`;
+      });
+      html+=col+`</div>`;
+    }
+    tt.innerHTML=html;
+  }
+  $("blockList").innerHTML = blocks.length
+    ? `<b>${T("noSlot")}</b> `+blocks.map(c=>`${esc(c.t)} <span class="mono">(${esc(c.block||T("slotOpen"))}${c.lp?", "+num(c.lp)+" "+CU:""})</span>`).join(" · ") : "";
+  /* legend */
+  const key=[];
+  if(COND) key.push(`<div><i class="c-cond"></i>${esc(COND_PL)}</div>`);
+  TRACKS.forEach(t=>key.push(`<div><i class="tr-${cssId(t.id)}"></i>${esc(t.short||t.label)}</div>`));
+  AREAS.filter(a=>a.color).forEach(a=>key.push(`<div><i class="ar-${cssId(a.id)}"></i>${esc(a.short||a.label)}</div>`));
+  [...new Set(BLOCKED.map(b=>b.label||T("blockedDefault")))].forEach(l=>key.push(`<div><i class="k-blocked"></i>${esc(l)}</div>`));
+  key.push(`<div><i class="k-ghost"></i>${T("ttGhost")}</div>`, `<div><i class="k-bad"></i>${T("ttGhostBad")}</div>`);
+  $("ttkey").innerHTML=key.join("");
+}
+
+/* ===== frequency (Turnus): the lecturers' own statement beats the counted history ===== */
+const RH_ORDER=["each-sem","each-ws","each-ss","yearly","repeat","likely-ws","likely-ss","mostly-ws","mostly-ss","irregular","unsure","once","first"];
+const rhText = code => (L[LANG].rh[code] || L.en.rh[code] || code);
+const RHEFF = c => c.rhx || c.rh || "";
+function RHLAB(c){
+  if(c.rhx) return c.rhxLabel || rhText(c.rhx);
+  if(!c.rh) return "";
+  const R=CFG.turnus && CFG.turnus.renumberedPrefix;
+  if(c.rh==="first" && R && String(c.nr||"").indexOf(R)===0) return T("renumbered");
+  return c.rhLabel || rhText(c.rh);
+}
+function RHCLS(c){
+  if(c.rhx){ if(c.rhx==="once") return "p-rhx-no"; if(c.rhx==="unsure"||c.rhx==="irregular") return "p-rhx-un"; return "p-rhx"; }
+  return /^each-/.test(c.rh||"") ? "p-go" : /^(mostly|likely)-/.test(c.rh||"") ? "p-accent" : "p-plain";
+}
+function RHSRC(c){
+  const hist = c.hs ? T("counted")+String(c.hs).replace(/,\s*/g," · ") : "";
+  if(!c.rhxq) return esc(hist);
+  const Q = LANG==="de" ? ["„","“"] : ["“","”"];
+  return esc((CFG.lms&&CFG.lms.name?CFG.lms.name+": ":"")+Q[0]+c.rhxq+Q[1])+(hist?" &nbsp;·&nbsp; "+esc(hist):"");
+}
+
+/* ===== cards: ONE chip builder for every card type, so no renderer forgets a chip ===== */
+const STLAB = () => ({must:[COND_LAB,"p-must"], go:[T("stGo"),"p-go"], cau:[T("stCau"),"p-cau"], stop:[T("stStop"),"p-stop"], proj:[T("stProj"),"p-accent"]});
+function whenText(c){
+  if(c.src==="future") return T("futWhen", SEM_SHORT);
+  if(c.src==="prior") return c.block || (c.sem ? T("passedIn", c.sem) : "");
+  if(c.src==="orphan"){ const r=rec(c.key)||{}; return r.sem ? T("passedIn", r.sem) : T("orphanWhen"); }
+  if(c.slots.length) return c.slots.map(s=>(T("days")[s.d-1]||"?")+" "+s.s+"–"+s.e).join(" · ");
+  return c.block || T("slotOpen");
+}
+function modPills(c){
+  if(!c.mods.length){
+    if(c.track && TRK[c.track]) return `<span class="pill p-accent"><i class="dot tr-${cssId(c.track)}"></i>${esc(TRK[c.track].short||TRK[c.track].label)}</span>`;
+    return c.mod ? `<span class="pill p-accent">${esc(c.mod)}</span>` : "";
+  }
+  const short=c.mods.length>1;
+  return c.mods.map(m=>{
+    const tr=modTrack(m), tip=(m!=="—"?m+" · ":"")+modLabel(m)+(tr&&TRK[tr]?" · "+(TRK[tr].short||TRK[tr].label):"");
+    return `<button type="button" class="pill p-accent" data-act="fmod" data-v="${attr(m)}" aria-pressed="${areaMod()===m}" title="${attr(tip)}">${esc(modChip(m,short))}</button>`;
+  }).join("");
+}
+function chips(c, ctx){
+  const r=rec(c.key)||{}, out=[];
+  if(ctx==="wish") out.push(`<span class="pill p-wish">${esc(T("forTarget", r.tgt||SEM_NOW))}</span>`);
+  else if(c.src==="project") out.push(`<span class="pill p-go">${T("projStart")}</span>`);
+  else if(c.src==="prior"){ if(c.cond) out.push(`<span class="pill p-must">${esc(COND_LAB)}</span>`); }
+  else if(c.src==="orphan") out.push(`<span class="pill p-plain">${T("orphanChip")}</span>`);
+  else { const [lab,cls]=STLAB()[c.st]||["",""]; if(lab) out.push(`<span class="pill ${cls}">${esc(lab)}</span>`); }
+  if(c.ext && EXT[c.ext]) out.push(`<span class="pill p-wish" title="${attr(EXT[c.ext].title||"")}">${esc(EXT[c.ext].label||c.ext)}</span>`);
+  if(c.neu){ const d=fmtDate(c.neu,true); out.push(`<span class="pill p-new" title="${attr(T("newChipTitle", fmtDate(c.neu)))}">${esc(T("newChip", d))}</span>`); }
+  if(c.src==="project" && (c.lpPerSem||(PROJ&&PROJ.creditsPerSem))) out.push(`<span class="pill p-plain mono">${esc(T("lpPerSem", c.lpPerSem||PROJ.creditsPerSem, CU))}</span>`);
+  else if(c.lp) out.push(`<span class="pill p-plain mono">${num(c.lp)} ${CU}</span>`);
+  if(c.nr) out.push(`<span class="pill p-plain mono">${esc(c.nr)}</span>`);
+  if(c.lang) out.push(`<span class="pill p-plain mono">${esc(c.lang)}</span>`);
+  const rh=RHLAB(c); if(rh) out.push(`<span class="pill ${RHCLS(c)}" title="${attr(c.rhxq||"")}">${esc(rh)}</span>`);
+  if(ctx==="wish"){ if(c.track&&TRK[c.track]) out.push(`<span class="pill p-accent"><i class="dot tr-${cssId(c.track)}"></i>${esc(TRK[c.track].short||TRK[c.track].label)}</span>`); }
+  else out.push(modPills(c));
+  return out.join("");
+}
+function statusRow(c){
+  const r=rec(c.key)||{};
+  const b=(v,lab,cls)=>`<button class="${cls||""}" data-act="st" data-key="${attr(c.key)}" data-v="${v}" aria-pressed="${(r.s||"none")===v}">${lab}</button>`;
+  let extra="";
+  if(r.s==="wish"){
+    const opts=TARGETS.includes(r.tgt)||!r.tgt ? TARGETS : [...TARGETS, r.tgt];
+    extra=`<label>${T("lblTarget")}</label><select data-act="tgt" data-key="${attr(c.key)}">`+opts.map(t=>`<option ${ (r.tgt||SEM_NOW)===t?"selected":""}>${esc(t)}</option>`).join("")+`</select>`;
+  }
+  if(r.s==="done"){
+    const area=r.area||defaultArea(c), G=CFG.grades||{};
+    const areaOpts=[...AREAS.filter(a=>!a.noCourses).map(a=>[a.id,a.short||a.label]), ...(COND?[[COND_ID,COND_LAB]]:[])];
+    extra=`<label>${T("lblGrade")}</label><input type="number" step="${G.step||0.1}" min="${G.min!=null?G.min:1}" max="${G.max!=null?G.max:5}" placeholder="—" value="${r.g!=null?r.g:""}" data-act="grade" data-key="${attr(c.key)}">`+
+      `<label>${T("lblArea")}</label><select data-act="area" data-key="${attr(c.key)}">`+areaOpts.map(([v,l])=>`<option value="${attr(v)}" ${area===v?"selected":""}>${esc(l)}</option>`).join("")+`</select>`+
+      `<label>${T("lblSem")}</label><input style="width:100px" type="text" placeholder="${attr(SEM_SHORT)}" value="${attr(r.sem||"")}" data-act="sem" data-key="${attr(c.key)}">`;
+  }
+  return `<div class="statusrow"><div class="seg">${b("none","—")}${b("plan",T("sPlan"))}${b("wish",T("sWish"),"v-wish")}${b("done",T("sDone"),"v-done")}${b("fail",T("sFail"),"v-fail")}</div>${extra}</div>`;
+}
+function cardHTML(c, ctx){
+  const r=rec(c.key)||{}, cl=clashesFor(c.key), g=ghostClashes(c.key);
+  const who=[c.who, (c.k&&c.k!=="—")?c.k:""].filter(Boolean).map(esc).join(" · ");
+  const link=c.url?` · <a href="${attr(c.url)}" target="_blank" rel="noopener">${esc((CFG.lms&&CFG.lms.name)||T("details"))} ↗</a>`:"";
+  if(ctx==="wish") return `<article class="card s-wish" data-key="${attr(c.key)}">
+    <div><h3>${esc(c.t)}</h3><div class="meta" style="margin-top:6px">${chips(c,"wish")}</div></div>
+    ${c.slots.length?`<div class="meta"><span class="when">${esc(whenText(c))}</span></div>`:""}
+    ${g.length?`<p class="ghostmsg">${esc(T("ghostMsgShort", g.join(" · ")))}</p>`:""}
+    ${statusRow(c)}</article>`;
+  return `<article class="card s-${r.s||"none"} ${cl.length?"clash":""}" data-key="${attr(c.key)}">
+    <div><h3>${esc(c.t)}</h3><div class="meta" style="margin-top:6px">${chips(c,ctx)}</div></div>
+    <div class="meta"><span class="when">${esc(whenText(c))}</span>${who||link?`<span class="who">${who?"· "+who:""}${link}</span>`:""}</div>
+    ${c.note?`<p class="note">${c.note}</p>`:""}
+    ${(c.hs||c.rhxq)?`<p class="srcline">${RHSRC(c)}</p>`:""}
+    ${cl.length?`<p class="clashmsg">${esc(T("clashMsg", cl.join(" · ")))}</p>`:""}
+    ${(()=>{ const b=c.src==="future"?[]:blockedFor(c); return b.length&&!g.length?`<p class="blockmsg">${esc(T("blockMsg", b.join(" · ")))}</p>`:""; })()}
+    ${g.length?`<p class="ghostmsg">${esc(T("ghostMsg", g.join(" · ")))}</p>`:""}
+    ${statusRow(c)}
+  </article>`;
+}
+
+/* ===== catalogue: filters ===== */
+let F={status:"all", mine:"all", area:"all", kind:"all", group:"none", q:""};
+const FDEFAULT={status:"all", mine:"all", area:"all", kind:"all", group:"none"};
+const areaMod = () => F.area.indexOf("m:")===0 ? F.area.slice(2) : null;
+const modsOf = c => c.mods.length ? c.mods : ["—"];
+/* areas without tracks (e.g. an elective area) get their own entry in the area filter */
+const trackAreas = new Set(TRACKS.map(t=>t.area).filter(Boolean));
+const plainAreas = AREAS.filter(a=>!trackAreas.has(a.id) && !a.noCourses);
+function passOther(c){
+  const r=rec(c.key)||{};
+  if(F.status!=="all" && c.st!==F.status) return false;
+  if(F.kind!=="all" && c.kind!==F.kind) return false;
+  if(F.mine!=="all" && (r.s||"none")!==F.mine) return false;
+  if(F.q){
+    const hay=(c.t+" "+(c.who||"")+" "+(c.mod||"")+" "+c.mods.join(" ")+" "+c.mods.map(modLabel).join(" ")+" "+(c.nr||"")+" "+(c.k||"")+" "+strip(c.note)).toLowerCase();
+    if(!hay.includes(F.q)) return false;
+  }
+  return true;
+}
+function passArea(c){
+  if(F.area==="all") return true;
+  const [p,v]=[F.area.slice(0,2), F.area.slice(2)];
+  if(p==="t:") return c.track===v;
+  if(p==="a:") return !c.track && defaultArea(c)===v;
+  if(p==="m:") return modsOf(c).includes(v);
+  return true;
+}
+function modsPresent(filter){
+  const set=new Set(); CAT.filter(filter).forEach(c=>modsOf(c).forEach(m=>set.add(m)));
+  return MODORDER.filter(m=>set.has(m)).concat([...set].filter(m=>!MODORDER.includes(m)).sort());
+}
+function rebuildAreaSelect(){
+  const sel=$("fArea"), base=CAT.filter(passOther), IND="    ";
+  const opt=(v,lab,n)=> (n||v===F.area) ? `<option value="${attr(v)}">${esc(lab)} (${n})</option>` : "";
+  let html=`<option value="all">${T("fAreaAll")} (${base.length})</option>`;
+  TRACKS.forEach(t=>{
+    const inT=c=>c.track===t.id;
+    html+=opt("t:"+t.id, t.label, base.filter(inT).length)
+        + modsPresent(inT).map(m=>opt("m:"+m, IND+modOpt(m), base.filter(c=>inT(c)&&modsOf(c).includes(m)).length)).join("");
+  });
+  plainAreas.forEach(a=>{
+    const inA=c=>!c.track && defaultArea(c)===a.id;
+    html+=opt("a:"+a.id, a.label, base.filter(inA).length)
+        + modsPresent(inA).map(m=>opt("m:"+m, IND+modOpt(m), base.filter(c=>inA(c)&&modsOf(c).includes(m)).length)).join("");
+  });
+  sel.innerHTML=html;
+  $("fArea").parentElement.hidden = (TRACKS.length+plainAreas.length+Object.keys(MODS).length)===0;
+}
+function groupSpec(){
+  const g=F.group;
+  if(g==="kind") return {order:["lecture","seminar","block","colloquium","other"], keys:c=>[c.kind], lab:k=>T("kindPl")[k]||k};
+  if(g==="track") return {order:[...TRACKS.map(t=>"t:"+t.id), ...plainAreas.map(a=>"a:"+a.id)],
+    keys:c=>[c.track?"t:"+c.track:"a:"+defaultArea(c)], lab:k=>k[0]==="t"?(TRK[k.slice(2)]||{}).label||k:(AREA[k.slice(2)]||{}).label||k};
+  if(g==="mod") return {order:[...MODORDER,"—"], keys:modsOf, lab:modLabel, sub:m=>m==="—"?"":m,
+    divider:m=>{ const tr=modTrack(m); if(tr&&TRK[tr]) return T("divTrack", TRK[tr].label); const a=modArea(m); return a&&AREA[a]?AREA[a].label:T("divNone"); }};
+  if(g==="st") return {order:["must","go","cau","stop"], keys:c=>[c.st], lab:k=>T("gStLab")[k]||k};
+  if(g==="rh") return {order:RH_ORDER, keys:c=>[RHEFF(c)], lab:k=>rhText(k)};
+  return null;
+}
+function renderCourses(){
+  const list=CAT.filter(c=>passOther(c)&&passArea(c)), grid=$("courseGrid");
+  const g=groupSpec();
+  if(!list.length) grid.innerHTML=`<p class="note" style="padding:20px 0">${T("noHits")}</p>`;
+  else if(!g) grid.innerHTML=list.map(c=>cardHTML(c,"cat")).join("");
+  else{
+    let html="", div=null;
+    const head=(k,items)=>{
+      const multi=items.filter(c=>c.mods.length>1).length;
+      return `<div class="grouphead"><h3>${esc(g.lab(k))}</h3>`+(g.sub&&g.sub(k)?`<span class="ctx">${esc(g.sub(k))}</span>`:"")
+        +`<span>${esc(T("groupCount", items.length, num(items.reduce((a,c)=>a+(+c.lp||0),0)), CU, F.group==="mod"?multi:0))}</span></div>`;
+    };
+    g.order.forEach(k=>{
+      const items=list.filter(c=>g.keys(c).includes(k)); if(!items.length) return;
+      if(g.divider){ const d=g.divider(k); if(d!==div){ div=d; html+=`<div class="splabel">${esc(d)}</div>`; } }
+      html+=head(k,items)+items.map(c=>cardHTML(c,"cat")).join("");
+    });
+    const rest=list.filter(c=>!g.keys(c).some(k=>g.order.includes(k)));
+    if(rest.length) html+=`<div class="grouphead"><h3>${T("groupRest")}</h3><span>${esc(T("nCourses",rest.length))}</span></div>`+rest.map(c=>cardHTML(c,"cat")).join("");
+    grid.innerHTML=html;
+  }
+  $("count").textContent=list.length+" / "+CAT.length;
+}
+function syncFilterUI(){
+  rebuildAreaSelect();
+  let on=false;
+  document.querySelectorAll(".fsel[data-f]").forEach(sel=>{
+    const f=sel.dataset.f, a=F[f]!==FDEFAULT[f];
+    sel.value=F[f]; if(sel.value!==F[f]){ F[f]=FDEFAULT[f]; sel.value=F[f]; }
+    sel.classList.toggle("on", a); sel.parentElement.classList.toggle("on", a);
+    if(a) on=true;
+  });
+  if(F.q) on=true;
+  $("resetF").hidden=!on;
+}
+
+/* ===== other sections ===== */
+function renderCond(){ if(COND) $("condGrid").innerHTML=[...PRIOR.filter(p=>p.cond), ...CONDS].map(c=>cardHTML(c,"cond")).join(""); }
+/* statuses whose course is no longer in the data keep counting; show them so they stay editable */
+function orphans(states){
+  return Object.entries(ST.courses).filter(([k,r])=>!byKey[k] && states.includes(r.s)).map(([k,r])=>({key:k,
+    t:r.t || (k.charAt(0).toUpperCase()+k.slice(1).replace(/-/g," ")), lp:r.lp, src:"orphan", mods:[], slots:[], st:"", kind:"other"}));
+}
+function renderPrior(){
+  const other=PRIOR.filter(p=>!p.cond).concat(orphans(["done","fail"]));
+  $("priorWrap").hidden=!other.length;
+  if(other.length) $("priorGrid").innerHTML=other.map(c=>cardHTML(c,"prior")).join("");
+}
+function renderFut(){ $("futWrap").hidden=!FUT.length; $("futHead").textContent=T("futHead", SEM_SHORT); $("futGrid").innerHTML=FUT.map(c=>cardHTML(c,"fut")).join(""); }
+function renderWish(){
+  const all=Object.entries(ST.courses).filter(([k,r])=>r.s==="wish").map(([k])=>byKey[k]).filter(Boolean);
+  const now=all.filter(c=>isKandidat(c.key) && c.src!=="future"), later=all.filter(c=>!now.includes(c));
+  const gone=orphans(["plan","wish"]);
+  const g=$("wishGrid");
+  if(!all.length && !gone.length){ g.innerHTML=`<p class="note" style="padding:6px 0">${T("wishEmpty", esc(SEM_NOW))}</p>`; return; }
+  let html="";
+  if(now.length) html+=`<div class="grouphead"><h3>${esc(T("wishNow", SEM_NOW))}</h3><span>${esc(T("wishNowSub", now.length, num(now.reduce((a,c)=>a+(+c.lp||0),0)), CU))}</span></div>`+now.map(c=>cardHTML(c,"wish")).join("");
+  if(later.length) html+=`<div class="grouphead"><h3>${T("wishLater")}</h3><span>${esc(T("nCourses",later.length))}</span></div>`+later.map(c=>cardHTML(c,"wish")).join("");
+  if(gone.length) html+=`<div class="grouphead"><h3>${T("orphanHead")}</h3><span>${esc(T("orphanSub"))}</span></div>`+gone.map(c=>cardHTML(c,"orphan")).join("");
+  g.innerHTML=html;
+}
+function renderProj(){
+  if(!PROJ) return;
+  $("projGrid").innerHTML=PROJS.map(p=>{
+    if(p.open===false) return `<article class="card"><div><h3>${esc(p.t)}</h3><div class="meta" style="margin-top:6px">
+        <span class="pill p-stop">${T("projRunning")}</span>${p.nr?`<span class="pill p-plain mono">${esc(p.nr)}</span>`:""}</div></div>
+      ${(p.when||p.who)?`<div class="meta"><span class="when">${esc(p.when||"")}</span>${p.who?`<span class="who">· ${esc(p.who)}</span>`:""}</div>`:""}
+      ${p.note?`<p class="note">${p.note}</p>`:""}</article>`;
+    return cardHTML(p,"proj");
+  }).join("");
+}
+function renderStatic(){
+  document.querySelectorAll("[data-t]").forEach(el=>{ el.innerHTML=T(el.dataset.t); });
+  $("eyebrow").textContent=CFG.eyebrow||"";
+  $("h1").innerHTML=esc(CFG.title||(LANG==="de"?"Studienplaner":"Study planner"))+(CFG.titleEm?` <em>${esc(CFG.titleEm)}</em>`:"");
+  $("lede").innerHTML=CFG.lede||T("lede");
+  $("catTitle").textContent=T("secCat", SEM_SHORT);
+  $("catSub").textContent=T("catSub", CAT.length, CAT.filter(c=>c.ext).length, !!PROJ);
+  const lg=[];
+  if(CAT.some(c=>c.st==="must")||COND) lg.push(`<div><span class="pill p-must">${esc(COND_LAB)}</span> ${T("lgMust")}</div>`);
+  lg.push(`<div><span class="pill p-go">${T("stGo")}</span> ${T("lgGo")}</div>`, `<div><span class="pill p-cau">${T("stCau")}</span> ${T("lgCau")}</div>`, `<div><span class="pill p-stop">${T("stStop")}</span> ${T("lgStop")}</div>`);
+  Object.entries(EXT).forEach(([k,e])=>{ if(CAT.some(c=>c.ext===k)) lg.push(`<div><span class="pill p-wish">${esc(e.label||k)}</span> ${esc(e.title||"")}</div>`); });
+  if(CAT.some(c=>c.neu)) lg.push(`<div><span class="pill p-new">${esc(T("newChip", LANG==="de"?"Datum":"date"))}</span> ${T("lgNew")}</div>`);
+  $("legend").innerHTML=lg.join("");
+  $("catHint").innerHTML=T("catHint"); $("catHint").hidden=!(TRACKS.length||Object.keys(MODS).length);
+  /* filters */
+  $("fStatus").innerHTML=`<option value="all">${T("fStatusAll")}</option>`+(CAT.some(c=>c.st==="must")?`<option value="must">${esc(COND_LAB)}</option>`:"")+
+    `<option value="go">${T("stGo")}</option><option value="cau">${T("stCau")}</option><option value="stop">${T("stStop")}</option>`;
+  $("fMine").innerHTML=`<option value="all">${T("fMineAll")}</option>`+["plan","wish","done","fail","none"].map(v=>`<option value="${v}">${T("m"+v[0].toUpperCase()+v.slice(1))}</option>`).join("");
+  $("fKind").innerHTML=`<option value="all">${T("fKindAll")}</option>`+["lecture","seminar","block","colloquium","other"].filter(k=>CAT.some(c=>c.kind===k)).map(k=>`<option value="${k}">${T("kind")[k]}</option>`).join("");
+  $("fGroup").innerHTML=`<option value="none">${T("fGroupNone")}</option><option value="kind">${T("gKind")}</option>`+
+    (TRACKS.length?`<option value="track">${T("gTrack")}</option>`:"")+(Object.keys(MODS).length?`<option value="mod">${T("gMod")}</option>`:"")+
+    `<option value="st">${T("gSt")}</option>`+(CAT.some(c=>c.rh||c.rhx)?`<option value="rh">${T("gRh")}</option>`:"");
+  [["fStatus","aStatus"],["fMine","aMine"],["fArea","aArea"],["fKind","aKind"],["fGroup","aGroup"],["q","aSearch"]].forEach(([id,k])=>$(id).setAttribute("aria-label",T(k)));
+  $("q").placeholder=T("searchPh"); $("resetF").textContent=T("resetF");
+  /* conditions / projects headers */
+  if(COND){ $("conditions").hidden=false; $("condTitle").textContent=COND.title||COND_LAB; $("condSub").textContent=COND.sub||T("condSub", COND.required, CU, COND.deadline); }
+  if(PROJ){ $("projects").hidden=false; $("projTitle").textContent=PROJ.title||PROJ.label||T("secProjShort"); $("projSub").textContent=PROJ.sub||""; }
+  /* turnus explainer */
+  const anyRh=[...CAT,...FUT].some(c=>c.rh||c.rhx);
+  $("turnusBox").hidden=!anyRh; if(anyRh) $("turnusBox").innerHTML=T("turnusBox", esc(LMS))+(DATA.turnusNote?`<p>${DATA.turnusNote}</p>`:"");
+  /* footer */
+  $("footer").innerHTML=(CFG.sources?`<p>${CFG.sources}</p>`:"")+`<p>${T("disclaimer")}</p>`;
+  if(CFG.pageTitle) document.title=CFG.pageTitle;
+}
+function renderPatch(){
+  const pn=(DATA.patchNotes||[]);
+  $("patch").hidden=!pn.length;
+  $("pn").innerHTML=pn.map((e,i)=>`<details ${i===0?"open":""}><summary><span class="pn-date">${esc(fmtDate(e.date))}</span><span class="pn-title">${esc(e.title||"")}</span>${(e.items||[]).length>1?`<span class="pn-n">${esc(T("nChanges",(e.items||[]).length))}</span>`:""}</summary><ul>${(e.items||[]).map(x=>`<li>${x}</li>`).join("")}</ul></details>`).join("");
+}
+function renderNotices(){
+  document.querySelectorAll(".notices").forEach(el=>{
+    const list=(DATA.notices||[]).filter(n=>n.section===el.dataset.for && !expired(n.until));
+    const body=h=>/<p[\s>]/i.test(h||"") ? h : `<p>${h||""}</p>`;
+    el.innerHTML=list.map(n=>`<div class="callout ${n.kind==="alert"?"alert":n.kind==="good"?"good":""}">${n.title?`<h3>${esc(n.title)}</h3>`:""}${body(n.html)}</div>`).join("");
+  });
+}
+function renderTodo(){
+  const items=(DATA.todo||[]).filter(t=>!expired(t.until));
+  $("todo").hidden=!items.length;
+  $("todoList").innerHTML=items.map(t=>`<li class="${t.done?"done":""}">${t.html||""}</li>`).join("");
+}
+function renderToc(){
+  const secs=[...document.querySelectorAll("section[data-toc]")].filter(s=>!s.hidden);
+  const lab=s=> s.id==="conditions"&&COND&&(COND.tocLabel||COND.labelPlural) ? esc(COND.tocLabel||COND.labelPlural)
+              : s.id==="projects"&&PROJ&&(PROJ.tocLabel||PROJ.label) ? esc(PROJ.tocLabel||PROJ.label) : T(s.dataset.toc);
+  $("tocnav").innerHTML=`<span class="brand">${T("tocBrand")}</span>`+secs.map(s=>`<a href="#${s.id}">${lab(s)}</a>`).join("");
+}
+function renderAll(){ renderCond(); renderPrior(); renderCourses(); renderFut(); renderWish(); renderProj(); renderTT(); renderProgress(); }
+
+/* ===== interaction ===== */
+document.addEventListener("click", e=>{
+  const mp=e.target.closest("[data-act='fmod']");
+  if(mp){ const m=mp.dataset.v; F.area=(areaMod()===m)?"all":"m:"+m; syncFilterUI(); renderCourses(); $("catalog").scrollIntoView({block:"start"}); return; }
+  const seg=e.target.closest("[data-act='st']");
+  if(seg){
+    const k=seg.dataset.key, v=seg.dataset.v, c=byKey[k], cur=rec(k)||{};
+    const next={...ST.courses};
+    if(v==="none") delete next[k];
+    else next[k]={s:v, t:(c&&c.t)||cur.t||undefined, g:(cur.g!=null?cur.g:null), lp:(cur.lp!=null?cur.lp:(c&&c.lp!=null?c.lp:null)), area:cur.area||defaultArea(c),
+                  sem:cur.sem||(v==="done"?SEM_SHORT:""), tgt:cur.tgt||(c&&c.src==="future"?(TARGETS[1]||SEM_NOW):SEM_NOW)};
+    ST={...ST, courses:next}; persist(); renderAll(); return;
+  }
+});
+document.addEventListener("change", e=>{
+  const sel=e.target.closest(".fsel[data-f]");
+  if(sel){ F[sel.dataset.f]=sel.value; syncFilterUI(); renderCourses(); return; }
+  const el=e.target.closest("[data-act]"); if(!el) return;
+  const act=el.dataset.act, k=el.dataset.key, cur=ST.courses[k]; if(!cur||act==="st") return;
+  const r={...cur};
+  if(act==="grade"){ const n=parseFloat(String(el.value).replace(",",".")); r.g=isNaN(n)?null:n; }
+  if(act==="area") r.area=el.value;
+  if(act==="sem") r.sem=el.value;
+  if(act==="tgt") r.tgt=el.value;
+  ST={...ST, courses:{...ST.courses, [k]:r}}; persist();
+  renderProgress(); if(act==="tgt"){ renderWish(); renderTT(); renderCourses(); }
+});
+$("q").addEventListener("input", e=>{ F.q=e.target.value.trim().toLowerCase(); syncFilterUI(); renderCourses(); });
+$("resetF").addEventListener("click", ()=>{ Object.assign(F, FDEFAULT); F.q=""; $("q").value=""; syncFilterUI(); renderCourses(); $("catalog").scrollIntoView({block:"start"}); });
+
+/* ===== data: artifact database, JSON backup ===== */
+const storeMsg = t => { $("storeStatus").textContent=t; };
+storeMsg(T("stChecking"));
+(async()=>{
+  let db=null;
+  try{ db = (window.claude && window.claude.use) ? await window.claude.use("db") : null; }catch(e){ db=null; }
+  if(!db){ storeMsg(T("stLocal")); return; }
+  dbRef=db.doc("plan/state");
+  let first=true;
+  dbRef.onSnapshot(s=>{
+    const d=s.exists?s.data():null;
+    if(first){
+      first=false;
+      if(d && d.courses && Object.keys(d.courses).length){ ST={courses:clone(d.courses), seeded:clone({a:d.seeded||[]}).a}; if(seedPrior()) persist(); else { try{ localStorage.setItem(STORE_KEY, JSON.stringify(ST)); }catch(e){} } renderAll(); }
+      else persist();
+      storeMsg(T("stDb")); return;
+    }
+    if(!d || !d.courses) return;
+    if(JSON.stringify(d.courses)===JSON.stringify(ST.courses)) return;
+    ST={courses:clone(d.courses), seeded:clone({a:d.seeded||ST.seeded}).a};
+    try{ localStorage.setItem(STORE_KEY, JSON.stringify(ST)); }catch(e){}
+    renderAll();
+  }, ()=>storeMsg(T("stDbFail")));
+})();
+$("exportBtn").addEventListener("click", async ()=>{
+  const payload=JSON.stringify({app:"study-planner", version:1, program:CFG.program||"", exported:new Date().toISOString(), courses:ST.courses, seeded:ST.seeded}, null, 2);
+  const name=(slug(CFG.program||"study-planner")||"study-planner")+"-"+new Date().toISOString().slice(0,10)+".json";
+  let dl=null;
+  try{ dl = (window.claude && window.claude.use) ? await window.claude.use("downloads") : null; }catch(e){ dl=null; }
+  if(dl){ try{ await dl.save({filename:name, data:payload}); storeMsg(T("stSaved", name)); return; }catch(err){ if(err && err.code==="declined") return; } }
+  try{ await navigator.clipboard.writeText(payload); storeMsg(T("stClip")); }catch(e){ storeMsg(T("stNoSave")); }
+});
+$("importBtn").addEventListener("click", ()=>{ $("importBox").hidden=!$("importBox").hidden; $("importText").placeholder=T("importPh"); });
+$("importCancel").addEventListener("click", ()=>{ $("importBox").hidden=true; $("importText").value=""; });
+$("importFile").addEventListener("change", e=>{ const f=e.target.files&&e.target.files[0]; if(!f) return; const rd=new FileReader(); rd.onload=()=>{ $("importText").value=String(rd.result||""); }; rd.readAsText(f); });
+$("importGo").addEventListener("click", ()=>{
+  try{
+    const d=JSON.parse($("importText").value);
+    if(!d || typeof d!=="object" || !d.courses || typeof d.courses!=="object") throw new Error("invalid");
+    ST={courses:clone(d.courses), seeded:Array.isArray(d.seeded)?d.seeded.slice():PRIOR.map(p=>p.key)};
+    persist(); renderAll(); storeMsg(T("stImported")); $("importBox").hidden=true; $("importText").value="";
+  }catch(e){ storeMsg(T("stBadImport")); }
+});
+let armT=null;
+$("resetBtn").addEventListener("click", ()=>{
+  const b=$("resetBtn");
+  if(!b.classList.contains("armed")){ b.classList.add("armed"); b.textContent=T("btnResetArm"); clearTimeout(armT); armT=setTimeout(()=>{ b.classList.remove("armed"); b.textContent=T("btnReset"); }, 5000); return; }
+  clearTimeout(armT); b.classList.remove("armed"); b.textContent=T("btnReset");
+  ST={courses:{}, seeded:[]}; seedPrior(); persist(); renderAll(); storeMsg(T("stReset"));
+});
+
+/* ===== boot ===== */
+renderStatic(); renderPatch(); renderNotices(); renderTodo(); renderToc();
+syncFilterUI(); renderAll();
+(function(){
+  const toc=$("toc"); if(!toc) return;
+  const links=[...toc.querySelectorAll("a")];
+  const setH=()=>document.documentElement.style.setProperty("--toc-h", toc.offsetHeight+"px");
+  setH(); if(window.ResizeObserver) new ResizeObserver(setH).observe(toc); else window.addEventListener("resize", setH);
+  if(!("IntersectionObserver" in window)) return;
+  const seen=new Map();
+  const io=new IntersectionObserver(es=>{
+    es.forEach(e=>seen.set(e.target.id, e.intersectionRatio));
+    let best=null, bestR=0; seen.forEach((r,id)=>{ if(r>bestR){ bestR=r; best=id; } });
+    links.forEach(a=>a.setAttribute("aria-current", a.getAttribute("href")==="#"+best ? "true" : "false"));
+  }, {rootMargin:"-20% 0px -60% 0px", threshold:[0,.25,.5,1]});
+  links.map(a=>document.querySelector(a.getAttribute("href"))).filter(Boolean).forEach(t=>io.observe(t));
+})();
+})();
+</script>
