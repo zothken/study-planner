@@ -24,6 +24,14 @@ _Avoid_: marketplace (alone), store, plugin directory
 The identifiers needed to repeat a catalogue import without rediscovery — catalogue tree nodes, term ids, module codes.
 _Avoid_: import config, settings
 
+**Catalogue extract** (Katalogauszug):
+The facts read from the course catalogue in one fetch — a whole term, or a single course from another catalogue. Facts only: no rating, no note for the student.
+_Avoid_: course list, Kursliste, import data
+
+**Enrolments** (Einschreibungen):
+The courses a student is enrolled in this term, read from the campus system. Not part of the course catalogue.
+_Avoid_: my courses, bookings
+
 **Admission condition** (Auflage):
 A course the admission letter requires on top of the degree.
 _Avoid_: requirement, prerequisite
