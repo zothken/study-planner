@@ -157,7 +157,10 @@ Abschlussarbeit. Auflagen stehen **neben** der Studienrechnung, wenn sie nicht a
   (Voraussetzung fehlt oder Teil II), *Auflage*;
 - Punkte, Kursnummer, **Turnus** (kräftig umrandet = Angabe der Lehrenden, blass = aus der Historie gezählt),
   Modul-Chips (Klick filtert nach dem Modul);
-- Termine, Lehrende, eine **Einschätzung für dich** und — falls vorhanden — Überschneidungen;
+- Termine und Lehrende; darunter, pro Karte ein- und ausklappbar (oder alle auf einmal über „Alle einklappen“):
+  die **Kursbeschreibung**, ein Kasten mit **Bezügen** (zeitliche Überschneidungen mit Belegtem, inhaltliche
+  Überschneidungen, Voraussetzungen und Folgekurse — ein Klick springt hin), dem **Hinweis für dich** und
+  **deiner eigenen Notiz** („✎ Notiz“, wird mit deinem Stand gespeichert);
 - die **Status-Knöpfe**: *belege ich*, *Wunsch*, *bestanden*, *nicht bestanden*.
 
 Mit den Filtern oben grenzt du nach Ampel, deinem Status, Schwerpunkt/Modul und Art ein, gruppierst nach

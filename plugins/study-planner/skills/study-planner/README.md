@@ -150,7 +150,10 @@ courses) are listed below.
   prerequisite or part II), *condition*;
 - credits, course number, **frequency** (strong outline = the lecturers said so, pale = counted from history),
   module chips (click to filter by module);
-- times, lecturers, an **assessment written for you** and any clashes;
+- times and lecturers; below them, foldable per card (or all at once with “Collapse all”): the **course
+  description**, a box with **related courses** (time clashes with what you booked, overlapping content,
+  prerequisites and follow-ups — click to jump), **advice written for you**, and **your own note** (“✎ Note”,
+  saved with your plan);
 - the **status buttons**: *taking*, *wish*, *passed*, *failed*.
 
 The filters narrow by rating, your status, track/module and format; group by track, module, rating or

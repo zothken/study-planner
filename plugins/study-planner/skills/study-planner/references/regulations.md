@@ -10,7 +10,7 @@ card. Both come from documents plus a short interview.
 4. Prior achievements
 5. The interview
 6. Rating a course (Ampel)
-7. Writing the card note
+7. Writing the card text
 8. "Zu klären" — open questions
 
 ## 1. Documents
@@ -82,20 +82,32 @@ Use the answers in ratings and notes; don't store them in the page beyond what t
 | `stop` — gesperrt | A hard prerequisite is missing ("non-negotiable requirement …"), it is Part II/III of a running course, it is for another regulation version, or registration is closed. Say what would unlock it and when. |
 | `must` | Admission condition (set automatically for `data.conditions`). |
 
-Quote the prerequisite sentence from the description in the note (in `<b>„…“</b>`). If there is no
+Quote the prerequisite sentence from the description in the `hint` (in `<b>„…“</b>`). If there is no
 description, say so and suggest asking the lecturer — don't invent content.
 
-## 7. Writing the card note
+## 7. Writing the card text
 
-2–5 sentences of inline HTML, in the planner's language, addressed to the student ("du" in German):
-1. What the course is (topics, format, assessment) — one sentence.
-2. Prerequisites, quoted when strict.
-3. Fit to this student (which of their courses prepare it, what it opens up — "Türöffner für …").
-4. Practicalities: clashes with other likely picks, limited places / first-session attendance, block dates,
-   language, "bestanden/nicht bestanden".
-Bold at most one or two phrases. Never begin with change-log words ("Neu seit …", "Nachtrag", "Fehlte
-bisher") — the `neu` chip and the patch notes carry that. Where the course was found (other faculty,
-module directory only) can be a short factual clause *inside* the note.
+Every card has the same fixed order: description, then one box with related courses, advice and the
+student's own note. Keep each kind of content in its field, so the cards stay uniform:
+
+- **`desc`** — what the course is, 1–2 sentences: topics, format, assessment. Neutral and from the catalogue;
+  nothing about the student, no ratings. If the catalogue has no description, say so here in one short
+  clause and suggest asking the lecturer — don't invent content.
+- **`hint`** — advice for *this* student, addressed to them ("du" in German), 1–3 sentences:
+  1. Prerequisites, quoted when strict.
+  2. Fit (which of their courses prepare it, what it opens up — "Türöffner für …").
+  3. Practicalities: limited places / first-session attendance, block dates, language, "bestanden/nicht
+     bestanden", how and where it counts, where it was found (other faculty, module directory only).
+  Leave it out if there is nothing to say.
+- **`rel`** — relations to other courses, one entry each: overlapping content (`content`, e.g. "nur eins
+  anrechenbar"), a course that should come first (`prereq`), a follow-up (`opens`), or a loose pointer
+  (`other`). Write each relation once; the page mirrors it onto the other card. **Never write time clashes**
+  ("Kollidiert mit …", "zeitgleich mit …") anywhere — the page computes them against what is booked and shows
+  them in the same box, always up to date.
+
+Bold at most one or two phrases per card. Never begin with change-log words ("Neu seit …", "Nachtrag",
+"Fehlte bisher") — the `neu` chip and the patch notes carry that. The student's own note ("Meine Notiz") is
+theirs: never prefill, rewrite or move it.
 
 ## 8. "Zu klären"
 

@@ -15,7 +15,7 @@ already implements the layout rules; the content rules are on you.
 
 1. **Change logs go into the patch notes, nowhere else.** One entry per update session at the top
    (`data.patchNotes`, newest first, only the newest open). Never put "Nachtrag"/"Update" boxes at the
-   start of a section, and never start a card note with "Neu seit …"/"Fehlte bisher …". New courses get
+   start of a section, and never start a card text (`desc`/`hint`) with "Neu seit …"/"Fehlte bisher …". New courses get
    `"neu":"<ISO date>"` (dashed chip). *Why:* the student opens the planner to plan, not to read history;
    notes at the top of every section pushed the actual content down.
 2. **Retire what is done.** Expired deadlines, "secure your place" warnings after enrolment, hints about a
@@ -60,7 +60,8 @@ template in `assets/` too if the change is generally useful, and bump the versio
 - **German quotes in JSON/JS strings** — use „…“; a straight `"` inside a string breaks the JSON. Let
   `json.dump` write the files; never hand-type JSON into the HTML.
 - **Invisible characters** (non-breaking space, zero-width) — write them as escapes, never literally.
-- **HTML in notes** is trusted inline HTML: escape `<`/`&` from scraped text before putting it into a note.
+- **HTML in card text** (`desc`, `hint`, `rel[].txt`) is trusted inline HTML: escape `<`/`&` from scraped text
+  before putting it there. The student's own notes are plain text and escaped by the page.
 - **Frozen database snapshots** — the engine clones before editing; if you touch state code, keep updates
   immutable (`ST.courses = {...ST.courses, [k]: next}`).
 - **Tests that find cards by `textContent.includes(title)`** hit the wrong card once another card mentions
