@@ -14,7 +14,8 @@ Builds a single-page planner that a student keeps all degree long:
 - **Timetable** — booked courses in track colours, shortlisted candidates dashed, red only where a candidate
   hits something booked.
 - **Catalogue** — every course of the term as a card: rating (fits / doable / blocked), credits, number,
-  frequency, modules, times, a note written for *this* student, status buttons (taking / wish / passed / failed).
+  frequency, modules, times, then (foldable) the description, a box with related courses, advice for *this*
+  student and their own note, and status buttons (taking / wish / passed / failed).
 - **Wishlist** — candidates for now and for later terms, plus recurring courses not offered this term.
 - **Projects**, **To clarify**, **Your data** (backup/restore).
 
@@ -34,7 +35,7 @@ slug of the course title, so they survive every re-import and republish.
 | `references/data-model.md` | Every config/data field, keys, saved state, colours. Read before editing JSON. |
 | `references/lms-studip.md` | Stud.IP discovery and term import. |
 | `references/lms-other.md` | HISinOne, LSF, CAMPUSonline, CampusNet, PDFs, manual lists. |
-| `references/regulations.md` | Regulations → config, conditions, interview, rating, writing card notes. |
+| `references/regulations.md` | Regulations → config, conditions, interview, rating, writing card text (desc / hint / rel). |
 | `references/rules-and-pitfalls.md` | House rules (with reasons), pitfalls, publishing, verification. |
 | `README.md` / `README.de.md` | Human setup guide (install, connect the campus system, first-open tour). |
 
@@ -65,9 +66,10 @@ First check whether the student already has a planner: `Artifact` `action:"list"
 3. **Import the term** — Stud.IP: `references/lms-studip.md`; anything else: `references/lms-other.md`.
    The student logs in themselves; you never handle passwords. Always run the module-directory
    cross-check. Store every id you discovered in `config.import`.
-4. **Write the cards**: rating, frequency (lecturers' statement beats counted history), note for this
-   student. Add prior achievements with fixed keys, conditions, future courses, projects, open questions,
-   and the first patch note ("Erste Fassung" / "First version").
+4. **Write the cards**: rating, frequency (lecturers' statement beats counted history), `desc` (what the
+   course is), `hint` (advice for this student), `rel` (related courses — never time clashes). Add prior
+   achievements with fixed keys, conditions, future courses, projects, open questions, and the first patch
+   note ("Erste Fassung" / "First version").
 5. **Build → verify → publish** (`references/rules-and-pitfalls.md` §4–5):
    `python3 scripts/planner.py build --config config.json --data data.json -o planner.html`,
    `node scripts/verify.mjs planner.html --click`, look at the screenshots, then publish with
@@ -78,7 +80,7 @@ First check whether the student already has a planner: `Artifact` `action:"list"
 ## B — term import
 
 1. Read the published planner and extract it (`planner.py extract`). Read `config.import` — it holds the
-   ids and module codes from last time. Read the saved state (ArtifactData `get` `plan/state`) so notes can
+   ids and module codes from last time. Read the saved state (ArtifactData `get` `plan/state`) so hints can
    refer to what the student booked.
 2. Import as in `references/lms-studip.md` §3 (or `lms-other.md`), including the module-directory
    cross-check. Diff against the current data: new courses get `"neu":"<today>"`; keep `ext` single imports
@@ -101,13 +103,15 @@ history counted on its own node, and a "To clarify" item if recognition is not c
 Extract, change the config/data (or the engine only if config can't express it), patch note, check, build,
 verify, publish. Colours from a screenshot of the campus timetable: map per track with custom hex pairs
 (`data-model.md` §6). Resolved questions become `done:true` with a "Geklärt:/Resolved:" lead; facts the
-student reports (enrolled, passed, decided) update the notes and retire related warnings in the same pass.
+student reports (enrolled, passed, decided) update the hints and retire related warnings in the same pass.
+Planners still on the old mixed `note`: split it into `desc` / `hint` / `rel` during the next update
+(`check` warns until then).
 
 ## E — sync enrolment
 
 Read the enrolled courses (Stud.IP: `SP.myCourses`; elsewhere the student's timetable or ICS). Show the
 matches, and after the student agrees: `get` `plan/state`, set only those keys to `{"s":"plan"}` (keep
-everything else), write the merged document back. Then update notes that assumed they were not enrolled.
+everything else), write the merged document back. Then update hints that assumed they were not enrolled.
 
 ## Non-negotiables
 

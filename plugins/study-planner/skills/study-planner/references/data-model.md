@@ -88,7 +88,10 @@ work on top of the degree (the page says so above the meters).
  "who":"Bruni", "mod":"CS24-MWP-AI · CL · NI", "st":"go",
  "rh":"first", "hs":"WS26", "rhx":"each-ws", "rhxq":"Yes, every winter term.",
  "slots":[{"d":2,"s":"12:00","e":"14:00"},{"d":3,"s":"10:00","e":"12:00"}],
- "block":"15.–19.03.2027", "note":"<b>…</b> why this matters for this student",
+ "block":"15.–19.03.2027",
+ "desc":"Neural networks from scratch: backprop, CNNs, transformers. PyTorch exercises, written exam.",
+ "hint":"Counts in two modules. <b>The strongest way into the ML track.</b>",
+ "rel":[{"t":"Neural Networks (B.Sc.)", "kind":"content", "txt":"only one of the two counts"}],
  "neu":"2026-09-24", "ext":"bsc", "url":"https://…/course/details/?sem_id=…", "lang":"EN"}
 ```
 
@@ -97,7 +100,7 @@ work on top of the degree (the page says so above the meters).
 | `t` | Title exactly as in the catalogue (the key is built from it). |
 | `k` | Format as the catalogue writes it; `kind` is derived (lecture/seminar/block/colloquium/other). |
 | `nr` | Course number — second anchor, shown as chip. |
-| `lp` | Credits, `null` if unknown (then say so in the note). |
+| `lp` | Credits, `null` if unknown (then say so in the `hint`). |
 | `who` | Lecturers, short. |
 | `mod` / `mods` | Module codes (`"A · B"` string or array). `"keine …"`/`"none"` → no module. |
 | `track`, `area` | Only when the module does not determine them (course without module, B.Sc. course → `area`). |
@@ -107,7 +110,11 @@ work on top of the degree (the page says so above the meters).
 | | Codes: `each-sem each-ws each-ss yearly repeat likely-ws likely-ss mostly-ws mostly-ss irregular unsure once first`. Free wording: `rhxLabel` / `rhLabel`. |
 | `slots` | Weekly slots, `d` 1=Mon … 7=Sun, `"HH:MM"`. Empty for block courses. |
 | `block` | Text for courses without a weekly slot ("08.–12.02.2027", "Termin offen"). |
-| `note` | Inline HTML, 2–5 sentences: what it is, prerequisites (quote them), fit to *this* student, clashes, deadlines. Never start with "Neu seit …", "Nachtrag", "Fehlte bisher" — use `neu`. |
+| `desc` | Inline HTML, 1–2 sentences: **what the course is** — topics, format, assessment. Neutral, from the catalogue, nothing about the student. |
+| `hint` | Inline HTML, 1–3 sentences: **Claude's advice for this student** — prerequisites (quote them), fit, practicalities (places, deadlines, language, how it counts). Optional. |
+| `rel` | Related courses: `[{"t":"Title" or "key":"…", "kind":"content\|prereq\|opens\|other", "txt":"short html"}]`. `content` = overlapping content (e.g. only one counts), `prereq` = this course needs the other first, `opens` = the other builds on this, `other` = worth looking at together. Write each relation **once**: the page shows it on both cards (`prereq` on one side reads as `opens` on the other), so word `txt` so it reads from both sides. Targets in the data become links; others show as plain text. **Never write time clashes** — the page computes them live against what is booked and lists them in the same box. |
+| `note` | Legacy (engine < 1.2): one mixed text. Still shown as the description, `planner.py check` warns. Split it into `desc` / `hint` / `rel` on the next update. |
+| | None of these may start with "Neu seit …", "Nachtrag", "Fehlte bisher" — use `neu`. |
 | `neu` | ISO date the course entered the planner after the first version → dashed chip "neu · 24.09.". |
 | `ext` | Key into `config.extCatalogs` for single imports from other catalogues. |
 | `key` | Explicit key — only for prior achievements and to resolve collisions. |
@@ -139,8 +146,15 @@ Artifact database document `plan/state`:
 
 ```json
 {"courses": {"<key>": {"s":"plan|wish|done|fail", "t":"Course title", "g":1.7, "lp":8, "area":"WP", "sem":"WiSe 26/27", "tgt":"SoSe 2027"}},
+ "notes": {"<key>": {"n":"the student's own text", "t":"Course title"}},
  "seeded": ["prior-…"], "updatedAt": 1790000000000}
 ```
+
+- `notes` (engine ≥ 1.2) holds the student's own note per course ("Meine Notiz" on the card). It is separate
+  from `courses` on purpose: setting a status back to "—" deletes the `courses` entry but keeps the note. Notes
+  whose course left the data show in the wishlist under "Nicht mehr im Katalog". Notes belong to the student:
+  Claude reads them for context but never writes, shortens or moves them, and keeps `notes` intact whenever it
+  writes the document.
 
 - `t` (the title) is stored with every status (engine ≥ 1.1). When a course leaves the data — e.g. last term's
   catalogue at a term change — its status keeps counting and the page lists it ("Bereits erbracht" for passed,
@@ -151,7 +165,10 @@ Artifact database document `plan/state`:
 - Claude may read it with ArtifactData `get` (collection path `plan`, doc id `state`) to write notes that
   know the student's plan (clashes, what is already booked).
 - Claude may write it only when the student asks (e.g. "mark the courses I'm enrolled in"): `get` first,
-  change only the affected keys, `set` the merged document. Never write it from an older copy.
+  change only the affected keys, `set` the merged document (with `notes` and `seeded` unchanged). Never write
+  it from an older copy.
+- Whether a card is folded is a per-browser convenience (localStorage `<storageKey>:fold`), not part of the
+  saved state.
 - Snapshots delivered by the database are deep-frozen: the engine clones before editing; keep it that way.
 
 ## 6. Colours

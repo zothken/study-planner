@@ -30,6 +30,9 @@ BLOCK_RE = {
 }
 # Change-log phrasing that belongs in the patch notes, not at the start of a card or section
 CHANGELOG_RE = re.compile(r'^\s*(<b>)?\s*(neu seit|nachtrag|fehlte bisher|neu im verzeichnis|new since|added on|update[: ]|was missing)', re.I)
+# Time clashes are computed live against booked courses — written into card text they go stale
+TIMECLASH_RE = re.compile(r'kollidiert|zeitgleich|zeitlich überschneid|clashes with|at the same time as', re.I)
+REL_KINDS = {"content", "prereq", "opens", "other"}
 
 
 def slug(s):
@@ -185,13 +188,42 @@ def check(cfg, data, today=None):
         if len(mod_tracks) > 1:
             W(f"{where}: modules span several tracks {sorted(mod_tracks)} — the first one is used for colours and bars; set 'track' explicitly if another is right")
         if src in ("courses", "conditions") and c.get("lp") in (None, "") and not c.get("lpNote"):
-            W(f"{where}: no credits 'lp' — fine if unknown, but say so in the note")
+            W(f"{where}: no credits 'lp' — fine if unknown, but say so in the hint")
         if c.get("ext") and c["ext"] not in (cfg.get("extCatalogs") or {}):
             E(f"{where}: ext '{c['ext']}' is not defined in config.extCatalogs")
-        if CHANGELOG_RE.search(c.get("note") or ""):
-            W(f"{where}: note starts like a change log ('Neu seit…/Nachtrag…'). Put that in the patch notes and use the 'neu' chip instead.")
+        for f in ("desc", "hint", "note"):
+            if CHANGELOG_RE.search(c.get(f) or ""):
+                W(f"{where}: {f} starts like a change log ('Neu seit…/Nachtrag…'). Put that in the patch notes and use the 'neu' chip instead.")
+        if TIMECLASH_RE.search((c.get("desc") or "") + " " + (c.get("hint") or "")):
+            W(f"{where}: the text mentions a time clash — clashes with booked courses are computed and shown under 'Bezüge'/'Related'; leave them out of desc/hint")
+        if c.get("note") and (c.get("desc") or c.get("hint")):
+            W(f"{where}: has the old 'note' next to desc/hint — 'note' is ignored then; remove it")
         if c.get("neu") and not re.match(r"^\d{4}-\d{2}-\d{2}$", str(c["neu"])):
             W(f"{where}: 'neu' should be an ISO date YYYY-MM-DD, got '{c['neu']}'")
+
+    # --- card text: legacy notes, related courses ---
+    legacy = [c.get("t", "?") for _, c in iter_courses(data) if c.get("note") and not (c.get("desc") or c.get("hint"))]
+    if legacy:
+        W(f"{len(legacy)} entries still use the old mixed 'note' (e.g. '{legacy[0][:50]}') — it is shown as the description. "
+          f"Split it into desc / hint / rel on the next update (references/data-model.md §3).")
+    for src, c in iter_courses(data):
+        own = c.get("key") or slug(c.get("t"))
+        where = f"{src} '{(c.get('t') or '?')[:60]}'"
+        rel = c.get("rel")
+        if rel is not None and not isinstance(rel, list):
+            E(f"{where}: rel must be a list of {{\"t\" or \"key\", \"kind\", \"txt\"}}")
+            continue
+        for r in rel or []:
+            if not isinstance(r, dict) or not (r.get("t") or r.get("key")):
+                E(f"{where}: rel entry {r} needs a title 't' or a 'key'")
+                continue
+            if r.get("kind", "other") not in REL_KINDS:
+                E(f"{where}: rel kind '{r.get('kind')}' must be one of {sorted(REL_KINDS)} (time clashes are computed, never written)")
+            k = r.get("key") or slug(r.get("t"))
+            if k == own:
+                E(f"{where}: rel points to the course itself")
+            elif k not in seen:
+                W(f"{where}: related course '{r.get('t') or r.get('key')}' is not in the data — it is shown as plain text without a link")
 
     # --- notices, todo, patch notes ---
     sections = {"progress", "conditions", "timetable", "catalog", "wishlist", "projects", "todo"}

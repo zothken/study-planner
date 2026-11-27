@@ -1,5 +1,5 @@
 <title>Study Planner</title>
-<meta name="planner-template" content="study-planner 1.1.0">
+<meta name="planner-template" content="study-planner 1.2.0">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Source+Sans+3:ital,wght@0,300;0,400;0,600;0,700;1,400&family=IBM+Plex+Mono:wght@400;500;600&display=swap">
@@ -127,6 +127,51 @@ button.pill[aria-pressed="true"]{background:var(--accent); color:var(--surface);
 .srcline{font-family:"IBM Plex Mono",monospace; font-size:12px; color:var(--ink-3); margin:0}
 .clashmsg{font-size:12.5px; color:var(--stop); font-family:"IBM Plex Mono",monospace; margin:0}
 .ghostmsg{font-size:12.5px; color:var(--wish); font-family:"IBM Plex Mono",monospace; margin:0}
+/* everything below the time line folds away; the status row stays */
+.when-row{display:flex; gap:6px; align-items:flex-start}
+.when-row .meta{flex:1 1 auto; min-width:0}
+.fold{appearance:none; flex:0 0 auto; width:28px; height:24px; margin:-3px -4px 0 0; border:1px solid var(--line); border-radius:7px; background:var(--surface-2);
+  color:var(--ink-2); cursor:pointer; font-size:12px; line-height:1; transition:.12s}
+.fold::before{content:"▾"; display:inline-block; transition:transform .12s}
+.fold[aria-expanded="false"]::before{transform:rotate(-90deg)}
+.fold:hover{border-color:var(--accent); color:var(--accent)}
+.fold:focus-visible{outline:2px solid var(--accent); outline-offset:1px}
+.cbody{display:flex; flex-direction:column; gap:9px}
+.cbody[hidden]{display:none}
+/* related courses · advice · own note — one quiet box, fixed row order, empty rows left out */
+.aside{background:var(--surface-2); border-radius:8px; padding:9px 12px; display:grid; grid-template-columns:auto 1fr; gap:7px 12px; align-items:baseline}
+.aside .lab{font-family:"IBM Plex Mono",monospace; font-size:10px; letter-spacing:.13em; text-transform:uppercase; color:var(--ink-3); white-space:nowrap}
+.aside .val{font-size:13.5px; color:var(--ink-2); min-width:0; overflow-wrap:anywhere}
+.aside .val b{color:var(--ink); font-weight:600}
+.aside ul{margin:0; padding:0; list-style:none; display:flex; flex-direction:column; gap:3px}
+.xk{font-family:"IBM Plex Mono",monospace; font-size:10.5px; padding:1px 6px; border-radius:999px; border:1px solid var(--line-2); color:var(--ink-3); margin-right:5px; white-space:nowrap}
+.xk.x-clash{color:var(--stop); border-color:var(--stop-line); background:var(--stop-bg)}
+.xk.x-ghost{color:var(--wish); border-color:var(--wish-line); background:var(--wish-bg)}
+.xk.x-block{color:var(--caution); border-color:var(--caution-line); background:var(--caution-bg)}
+.xref{color:var(--accent); text-decoration:none; border-bottom:1px dotted var(--accent); cursor:pointer}
+.xref:hover{border-bottom-style:solid}
+.xsub{color:var(--ink-3)}
+.aside .mine{grid-column:1/-1; display:grid; grid-template-columns:auto 1fr; gap:4px 12px; align-items:start}
+.aside .lab + .mine, .aside .val + .mine{border-top:1px dashed var(--line-2); padding-top:8px}
+.aside .mine .lab{padding-top:6px}
+.aside textarea{font:inherit; font-family:"Source Sans 3",sans-serif; font-size:13.5px; width:100%; min-height:40px; resize:vertical; border:1px solid var(--line-2);
+  border-radius:7px; background:var(--surface); color:var(--ink); padding:5px 8px; box-sizing:border-box}
+.aside textarea:focus-visible{outline:2px solid var(--accent); outline-offset:1px}
+.addnote{margin-left:auto; font-family:"IBM Plex Mono",monospace; font-size:11.5px; padding:4px 10px; border-radius:999px; border:1px dashed var(--line-2);
+  background:transparent; color:var(--ink-3); cursor:pointer; transition:.12s}
+.addnote:hover{border-color:var(--accent); color:var(--accent)}
+.addnote:focus-visible{outline:2px solid var(--accent); outline-offset:2px}
+.foldall{font-family:"IBM Plex Mono",monospace; font-size:11.5px; padding:5px 10px; border-radius:999px; border:1px solid var(--line-2);
+  background:var(--surface); color:var(--ink-2); cursor:pointer; transition:.12s; white-space:nowrap}
+.foldall:hover{border-color:var(--accent); color:var(--accent)}
+.foldall:focus-visible{outline:2px solid var(--accent); outline-offset:2px}
+.card.flash{animation:flash 1.4s ease-out}
+@keyframes flash{0%,40%{box-shadow:0 0 0 3px var(--accent), var(--shadow)}}
+@media (max-width:560px){
+  .aside, .aside .mine{grid-template-columns:1fr; gap:3px}
+  .aside .val{margin-bottom:6px}
+  .aside .mine .lab{padding-top:0}
+}
 
 /* status row */
 .statusrow{display:flex; gap:7px; flex-wrap:wrap; align-items:center; padding-top:9px; border-top:1px dashed var(--line)}
@@ -201,7 +246,7 @@ html{scroll-behavior:smooth}
 .subhead{font-family:"Instrument Serif",ui-serif,Georgia,serif; font-weight:400; font-size:24px; margin:26px 0 12px}
 
 /* timetable */
-.ttwrap{overflow-x:auto; border:1px solid var(--line); border-radius:var(--r); background:var(--surface)}
+.ttwrap{overflow-x:auto; overflow-y:hidden; border:1px solid var(--line); border-radius:var(--r); background:var(--surface)}
 .tt{display:grid}
 .tt .hd{font-family:"IBM Plex Mono",monospace; font-size:11px; letter-spacing:.12em; text-transform:uppercase; color:var(--ink-3);
   padding:9px 8px; border-bottom:1px solid var(--line); text-align:center}
@@ -309,7 +354,7 @@ footer p{margin:0 0 6px}
   .seg button{padding:4px 9px; font-size:11px}
   .card{padding:13px 14px}
 }
-@media (prefers-reduced-motion:reduce){*{transition:none !important} html{scroll-behavior:auto}}
+@media (prefers-reduced-motion:reduce){*{transition:none !important} html{scroll-behavior:auto} .card.flash{animation:none}}
 </style>
 <style id="planner-colors"></style>
 <style id="planner-custom-css"></style>
@@ -376,6 +421,7 @@ footer p{margin:0 0 6px}
         </div>
         <div class="toolrow searchrow">
           <input type="search" id="q">
+          <button class="foldall" id="foldAll" type="button"></button>
           <span class="count" id="count"></span>
         </div>
       </div>
@@ -438,7 +484,7 @@ footer p{margin:0 0 6px}
 </script>
 
 <script>
-/* Study Planner engine 1.1.0 — renders everything from #planner-config and #planner-data.
+/* Study Planner engine 1.2.0 — renders everything from #planner-config and #planner-data.
    Content edits go into the two JSON blocks; this script stays the same across users. */
 (function(){
 "use strict";
@@ -490,7 +536,10 @@ de:{
   futHead:sem=>`Läuft nicht im ${sem} — Kandidaten für kommende Semester`, futWhen:sem=>`läuft nicht im ${sem}`,
   forTarget:t=>"für "+t,
   turnusBox:lms=>`<h3>Woher der Turnus kommt</h3><p><b>Zwei Quellen, in dieser Reihenfolge.</b> Wo die Lehrenden selbst angeben, ob der Kurs wiederkommt, gilt ihre Angabe — kräftig umrandet: <span class="pill p-rhx">wiederkehrend</span> <span class="pill p-rhx-un">unsicher</span> <span class="pill p-rhx-no">nur dieses Mal</span>. Der Originalsatz steht unter der Kursbeschreibung. Für alle übrigen ist die Angebotshistorie aus ${lms} gezählt; deren Chips sind blass.</p>`,
-  clashMsg:l=>"⚠ Überschneidung mit: "+l, ghostMsg:l=>"Als Kandidat notiert — läge auf: "+l, ghostMsgShort:l=>"Läge auf: "+l,
+  ghostMsgShort:l=>"Läge auf: "+l,
+  lblRel:"Bezüge", lblHint:"Hinweis", lblMine:"Meine Notiz", minePh:"Nur für dich — wird mit deinem Stand gespeichert",
+  rel:{time:"Zeit", block:"Sperrzeit", content:"Inhalt", prereq:"setzt voraus", opens:"öffnet", other:"siehe"},
+  relBooked:"belegt", addNote:"✎ Notiz", foldCard:"Details ein- oder ausklappen", foldAllClose:"Alle einklappen", foldAllOpen:"Alle ausklappen",
   newChip:d=>"neu · "+d, newChipTitle:d=>`Seit ${d} im Planer — Details in den Patch Notes`,
   lpPerSem:(lp,cu)=>`${lp} ${cu} / Sem.`,
   secProjShort:"Projekte", projSub:"", projRunning:"läuft bereits", projStart:"Neustart",
@@ -514,8 +563,8 @@ de:{
   disclaimer:"Ampel und Turnus sind Einschätzungen aus Kursbeschreibungen und gemessener Angebotshistorie, keine verbindliche Auskunft des Prüfungsamts. Für die Anrechnung gilt allein die Prüfungsordnung.",
   counted:"gezählt: ", passedIn:s=>"bestanden "+s, noModule:"ohne Modul", noModuleLong:"Ohne Modulzuordnung",
   renumbered:"neu unter dieser Nummer", details:"Details",
-  blockedDefault:"Gesperrt", blockMsg:l=>"Liegt in deiner Sperrzeit: "+l,
-  orphanChip:"nicht mehr im Katalog", orphanWhen:"nicht mehr im aktuellen Katalog", orphanHead:"Nicht mehr im Katalog", orphanSub:"Status bleibt gespeichert — auf „—“ setzen, um ihn zu entfernen",
+  blockedDefault:"Gesperrt",
+  orphanChip:"nicht mehr im Katalog", orphanWhen:"nicht mehr im aktuellen Katalog", orphanHead:"Nicht mehr im Katalog", orphanSub:"Status und Notiz bleiben gespeichert — zum Entfernen auf „—“ setzen bzw. die Notiz leeren",
   rh:{"each-sem":"jedes Semester","each-ws":"jedes WiSe","each-ss":"jedes SoSe","yearly":"jährlich","repeat":"wird wiederholt",
       "likely-ws":"voraussichtlich jedes WiSe","likely-ss":"voraussichtlich jedes SoSe","mostly-ws":"meist WiSe","mostly-ss":"meist SoSe",
       "irregular":"unregelmäßig","unsure":"unklar","once":"nur dieses Mal","first":"erstmals erfasst"}
@@ -558,7 +607,10 @@ en:{
   futHead:sem=>`Not offered in ${sem} — candidates for upcoming terms`, futWhen:sem=>`not offered in ${sem}`,
   forTarget:t=>"for "+t,
   turnusBox:lms=>`<h3>Where the frequency comes from</h3><p><b>Two sources, in this order.</b> Where the lecturers state themselves whether the course comes back, their answer wins — strong outline: <span class="pill p-rhx">recurring</span> <span class="pill p-rhx-un">unsure</span> <span class="pill p-rhx-no">this time only</span>. Their original sentence is shown under the description. For everything else the offering history in ${lms} was counted; those chips are pale.</p>`,
-  clashMsg:l=>"⚠ Clashes with: "+l, ghostMsg:l=>"Shortlisted — would sit on: "+l, ghostMsgShort:l=>"Would sit on: "+l,
+  ghostMsgShort:l=>"Would sit on: "+l,
+  lblRel:"Related", lblHint:"Advice", lblMine:"My note", minePh:"Just for you — saved with your plan",
+  rel:{time:"time", block:"blocked", content:"overlap", prereq:"requires", opens:"leads to", other:"see"},
+  relBooked:"taking", addNote:"✎ Note", foldCard:"Show or hide details", foldAllClose:"Collapse all", foldAllOpen:"Expand all",
   newChip:d=>"new · "+d, newChipTitle:d=>`In the planner since ${d} — details in the patch notes`,
   lpPerSem:(lp,cu)=>`${lp} ${cu} / term`,
   secProjShort:"Projects", projSub:"", projRunning:"already running", projStart:"new start",
@@ -582,8 +634,8 @@ en:{
   disclaimer:"Ratings and frequency are estimates from course descriptions and the measured offering history, not a binding statement by the examination office. Only the examination regulations decide what counts.",
   counted:"counted: ", passedIn:s=>"passed "+s, noModule:"no module", noModuleLong:"No module assignment",
   renumbered:"new under this number", details:"Details",
-  blockedDefault:"Blocked", blockMsg:l=>"Falls in your blocked time: "+l,
-  orphanChip:"no longer in catalogue", orphanWhen:"not in the current catalogue", orphanHead:"No longer in the catalogue", orphanSub:"status is kept — set it to “—” to remove it",
+  blockedDefault:"Blocked",
+  orphanChip:"no longer in catalogue", orphanWhen:"not in the current catalogue", orphanHead:"No longer in the catalogue", orphanSub:"status and note are kept — set it to “—” or clear the note to remove them",
   rh:{"each-sem":"every term","each-ws":"every winter","each-ss":"every summer","yearly":"yearly","repeat":"will be repeated",
       "likely-ws":"likely every winter","likely-ss":"likely every summer","mostly-ws":"mostly winter","mostly-ss":"mostly summer",
       "irregular":"irregular","unsure":"unsure","once":"this time only","first":"first time recorded"}
@@ -673,6 +725,7 @@ function norm(c, src){
   if(!c.st) c.st = c.cond ? "must" : src==="project" ? "proj" : "go";
   c.kind = c.kind || kindOf(c.k);
   c.slots = Array.isArray(c.slots) ? c.slots.filter(s=>s && s.d && s.s && s.e) : [];
+  if(c.desc==null && c.note) c.desc=c.note; // data from engines < 1.2 has one mixed "note"
   return c;
 }
 function defaultArea(c){
@@ -698,7 +751,20 @@ FUT.forEach(c=>norm(c,"future")); PROJ_OPEN.forEach(c=>norm(c,"project"));
   }
   c.key=k; byKey[k]=c; ALL.push(c);
 });
-window.PLANNER = {CFG, DATA, ALL, byKey, DUPES, defaultArea};
+/* related courses: written once in the data, shown on both cards (prereq on one side = opens on the other) */
+const REL_FLIP={content:"content", prereq:"opens", opens:"prereq", other:"other"};
+const REL={};
+function addRel(k, e){
+  const list=REL[k]||(REL[k]=[]);
+  if(!list.some(x=>e.key ? x.key===e.key : (!x.key && x.t===e.t))) list.push(e);
+}
+ALL.forEach(c=>(Array.isArray(c.rel)?c.rel:[]).forEach(r=>{
+  if(!r || !(r.t||r.key)) return;
+  const kind=REL_FLIP[r.kind]?r.kind:"other", o=byKey[r.key||slug(r.t)];
+  addRel(c.key, {kind, key:o?o.key:null, t:o?o.t:(r.t||r.key), txt:r.txt||""});
+  if(o && o.key!==c.key) addRel(o.key, {kind:REL_FLIP[kind], key:c.key, t:c.t, txt:r.txt||""});
+}));
+window.PLANNER = {CFG, DATA, ALL, byKey, DUPES, REL, defaultArea};
 
 /* ===== colours: one per track (and per area / conditions), light and dark ===== */
 const PALETTE={
@@ -730,9 +796,11 @@ const evClass = c => c.cond ? "c-cond" : c.track ? "tr-"+cssId(c.track) : "ar-"+
 
 /* ===== state ===== */
 const STORE_KEY = CFG.storageKey || ("study-planner-"+(slug(CFG.program||CFG.title||"plan")||"plan"));
-let ST={courses:{}, seeded:[]};
-try{ const raw=localStorage.getItem(STORE_KEY); if(raw){ const d=JSON.parse(raw); if(d&&d.courses) ST={courses:d.courses, seeded:d.seeded||[]}; } }catch(e){}
+/* courses: status per key · notes: the student's own note per key, kept apart so "—" never deletes a note */
+let ST={courses:{}, seeded:[], notes:{}};
+try{ const raw=localStorage.getItem(STORE_KEY); if(raw){ const d=JSON.parse(raw); if(d&&d.courses) ST={courses:d.courses, seeded:d.seeded||[], notes:d.notes||{}}; } }catch(e){}
 const rec = k => ST.courses[k] || null;
+const myNote = k => { const n=ST.notes && ST.notes[k]; return n && n.n ? n.n : ""; };
 /* database snapshots are frozen — always clone before editing, update immutably */
 const clone = o => { try{ return JSON.parse(JSON.stringify(o||{})); }catch(e){ return {}; } };
 function seedPrior(){
@@ -748,7 +816,7 @@ seedPrior();
 let dbRef=null;
 function persist(){
   try{ localStorage.setItem(STORE_KEY, JSON.stringify(ST)); }catch(e){}
-  if(dbRef) dbRef.set({courses:ST.courses, seeded:ST.seeded, updatedAt:Date.now()}).catch(()=>{});
+  if(dbRef) dbRef.set({courses:ST.courses, seeded:ST.seeded, notes:ST.notes, updatedAt:Date.now()}).catch(()=>{});
 }
 
 /* ===== progress against the regulations ===== */
@@ -1028,25 +1096,67 @@ function statusRow(c){
       `<label>${T("lblArea")}</label><select data-act="area" data-key="${attr(c.key)}">`+areaOpts.map(([v,l])=>`<option value="${attr(v)}" ${area===v?"selected":""}>${esc(l)}</option>`).join("")+`</select>`+
       `<label>${T("lblSem")}</label><input style="width:100px" type="text" placeholder="${attr(SEM_SHORT)}" value="${attr(r.sem||"")}" data-act="sem" data-key="${attr(c.key)}">`;
   }
-  return `<div class="statusrow"><div class="seg">${b("none","—")}${b("plan",T("sPlan"))}${b("wish",T("sWish"),"v-wish")}${b("done",T("sDone"),"v-done")}${b("fail",T("sFail"),"v-fail")}</div>${extra}</div>`;
+  const note=(myNote(c.key)||NOTE_OPEN.has(c.key)) ? "" : `<button type="button" class="addnote" data-act="addnote" data-key="${attr(c.key)}">${T("addNote")}</button>`;
+  return `<div class="statusrow"><div class="seg">${b("none","—")}${b("plan",T("sPlan"))}${b("wish",T("sWish"),"v-wish")}${b("done",T("sDone"),"v-done")}${b("fail",T("sFail"),"v-fail")}</div>${extra}${note}</div>`;
+}
+/* fold state is a per-viewer convenience: browser storage only, never the shared plan */
+const FOLD_KEY=STORE_KEY+":fold";
+let FOLD={def:"open", x:[]};
+try{ const f=JSON.parse(localStorage.getItem(FOLD_KEY)||"null"); if(f && (f.def==="open"||f.def==="closed") && Array.isArray(f.x)) FOLD=f; }catch(e){}
+const isOpen = k => (FOLD.def==="open") !== FOLD.x.includes(k);
+const NOTE_OPEN=new Set(); // "✎ Note" clicked, nothing typed yet
+/* time overlaps are never written by hand: computed live against what is booked */
+function timeRel(c){
+  if(["future","prior","orphan"].includes(c.src)) return [];
+  const r=rec(c.key)||{}; if(r.s==="done"||r.s==="fail") return [];
+  const cls = r.s==="plan" ? "x-clash" : isKandidat(c.key) ? "x-ghost" : "";
+  /* name only the slots that actually overlap */
+  const hit=o=>o.slots.filter(y=>c.slots.some(x=>+x.d===+y.d && mins(x.s)<mins(y.e) && mins(y.s)<mins(x.e)))
+    .map(y=>(T("days")[y.d-1]||"?")+" "+y.s+"–"+y.e).join(" · ");
+  const out=planned().filter(o=>o.key!==c.key && overlaps(c,o)).map(o=>({kind:"time", cls, key:o.key, t:o.t, sub:hit(o)+" · "+T("relBooked")}));
+  blockedFor(c).forEach(l=>out.push({kind:"block", cls:"x-block", t:l}));
+  return out;
+}
+function relItem(x){
+  const name = x.key ? `<a class="xref" href="#" data-act="jump" data-key="${attr(x.key)}">${esc(x.t)}</a>` : `<span>${esc(x.t)}</span>`;
+  const tail = x.sub ? ` <span class="xsub">· ${esc(x.sub)}</span>` : x.txt ? ` – ${x.txt}` : "";
+  return `<li><span class="xk ${x.cls||""}">${esc(T("rel")[x.kind]||x.kind)}</span>${name}${tail}</li>`;
+}
+function mineHTML(c){
+  const n=myNote(c.key);
+  if(!n && !NOTE_OPEN.has(c.key)) return "";
+  const rows=Math.min(8, Math.max(2, n.split("\n").length));
+  return `<div class="mine"><span class="lab">${T("lblMine")}</span><textarea rows="${rows}" data-act="mynote" data-key="${attr(c.key)}" placeholder="${attr(T("minePh"))}" aria-label="${attr(T("lblMine")+": "+c.t)}">${esc(n)}</textarea></div>`;
+}
+function asideHTML(c){
+  const rel=[...timeRel(c), ...(REL[c.key]||[])];
+  let h="";
+  if(rel.length) h+=`<span class="lab">${T("lblRel")}</span><ul class="val">${rel.map(relItem).join("")}</ul>`;
+  if(c.hint) h+=`<span class="lab">${T("lblHint")}</span><span class="val">${c.hint}</span>`;
+  h+=mineHTML(c);
+  return h ? `<div class="aside">${h}</div>` : "";
 }
 function cardHTML(c, ctx){
   const r=rec(c.key)||{}, cl=clashesFor(c.key), g=ghostClashes(c.key);
   const who=[c.who, (c.k&&c.k!=="—")?c.k:""].filter(Boolean).map(esc).join(" · ");
   const link=c.url?` · <a href="${attr(c.url)}" target="_blank" rel="noopener">${esc((CFG.lms&&CFG.lms.name)||T("details"))} ↗</a>`:"";
-  if(ctx==="wish") return `<article class="card s-wish" data-key="${attr(c.key)}">
+  if(ctx==="wish"){
+    const mine=mineHTML(c);
+    return `<article class="card s-wish" data-key="${attr(c.key)}">
     <div><h3>${esc(c.t)}</h3><div class="meta" style="margin-top:6px">${chips(c,"wish")}</div></div>
     ${c.slots.length?`<div class="meta"><span class="when">${esc(whenText(c))}</span></div>`:""}
     ${g.length?`<p class="ghostmsg">${esc(T("ghostMsgShort", g.join(" · ")))}</p>`:""}
+    ${mine?`<div class="aside">${mine}</div>`:""}
     ${statusRow(c)}</article>`;
+  }
+  /* fixed order: description · frequency source · related / advice / own note */
+  const body=(c.desc?`<p class="note">${c.desc}</p>`:"")+((c.hs||c.rhxq)?`<p class="srcline">${RHSRC(c)}</p>`:"")+asideHTML(c);
+  const open=isOpen(c.key);
+  const fold=body ? `<button type="button" class="fold" data-act="fold" data-key="${attr(c.key)}" aria-expanded="${open}" aria-label="${attr(T("foldCard"))}" title="${attr(T("foldCard"))}"></button>` : "";
   return `<article class="card s-${r.s||"none"} ${cl.length?"clash":""}" data-key="${attr(c.key)}">
     <div><h3>${esc(c.t)}</h3><div class="meta" style="margin-top:6px">${chips(c,ctx)}</div></div>
-    <div class="meta"><span class="when">${esc(whenText(c))}</span>${who||link?`<span class="who">${who?"· "+who:""}${link}</span>`:""}</div>
-    ${c.note?`<p class="note">${c.note}</p>`:""}
-    ${(c.hs||c.rhxq)?`<p class="srcline">${RHSRC(c)}</p>`:""}
-    ${cl.length?`<p class="clashmsg">${esc(T("clashMsg", cl.join(" · ")))}</p>`:""}
-    ${(()=>{ const b=c.src==="future"?[]:blockedFor(c); return b.length&&!g.length?`<p class="blockmsg">${esc(T("blockMsg", b.join(" · ")))}</p>`:""; })()}
-    ${g.length?`<p class="ghostmsg">${esc(T("ghostMsg", g.join(" · ")))}</p>`:""}
+    <div class="when-row"><div class="meta"><span class="when">${esc(whenText(c))}</span>${who||link?`<span class="who">${who?"· "+who:""}${link}</span>`:""}</div>${fold}</div>
+    ${body?`<div class="cbody"${open?"":" hidden"}>${body}</div>`:""}
     ${statusRow(c)}
   </article>`;
 }
@@ -1065,7 +1175,8 @@ function passOther(c){
   if(F.kind!=="all" && c.kind!==F.kind) return false;
   if(F.mine!=="all" && (r.s||"none")!==F.mine) return false;
   if(F.q){
-    const hay=(c.t+" "+(c.who||"")+" "+(c.mod||"")+" "+c.mods.join(" ")+" "+c.mods.map(modLabel).join(" ")+" "+(c.nr||"")+" "+(c.k||"")+" "+strip(c.note)).toLowerCase();
+    const hay=(c.t+" "+(c.who||"")+" "+(c.mod||"")+" "+c.mods.join(" ")+" "+c.mods.map(modLabel).join(" ")+" "+(c.nr||"")+" "+(c.k||"")+" "+strip(c.desc)+" "+strip(c.hint)
+      +" "+(REL[c.key]||[]).map(x=>x.t+" "+strip(x.txt)).join(" ")+" "+myNote(c.key)).toLowerCase();
     if(!hay.includes(F.q)) return false;
   }
   return true;
@@ -1108,6 +1219,12 @@ function groupSpec(){
     divider:m=>{ const tr=modTrack(m); if(tr&&TRK[tr]) return T("divTrack", TRK[tr].label); const a=modArea(m); return a&&AREA[a]?AREA[a].label:T("divNone"); }};
   if(g==="st") return {order:["must","go","cau","stop"], keys:c=>[c.st], lab:k=>T("gStLab")[k]||k};
   if(g==="rh") return {order:RH_ORDER, keys:c=>[RHEFF(c)], lab:k=>rhText(k)};
+  /* filtered to "wish" without an explicit grouping: group by target term, in the order of config.targets */
+  if(F.mine==="wish"){
+    const tgt=c=>(rec(c.key)||{}).tgt||SEM_NOW;
+    const extra=[...new Set(CAT.filter(c=>(rec(c.key)||{}).s==="wish").map(tgt))].filter(t=>!TARGETS.includes(t));
+    return {order:[...TARGETS,...extra], keys:c=>[tgt(c)], lab:k=>k===SEM_NOW ? T("wishNow", k) : k.charAt(0).toUpperCase()+k.slice(1)};
+  }
   return null;
 }
 function renderCourses(){
@@ -1162,7 +1279,8 @@ function renderFut(){ $("futWrap").hidden=!FUT.length; $("futHead").textContent=
 function renderWish(){
   const all=Object.entries(ST.courses).filter(([k,r])=>r.s==="wish").map(([k])=>byKey[k]).filter(Boolean);
   const now=all.filter(c=>isKandidat(c.key) && c.src!=="future"), later=all.filter(c=>!now.includes(c));
-  const gone=orphans(["plan","wish"]);
+  const gone=orphans(["plan","wish"]).concat(Object.keys(ST.notes||{}).filter(k=>!byKey[k] && !ST.courses[k] && myNote(k)).map(k=>({key:k,
+    t:ST.notes[k].t || (k.charAt(0).toUpperCase()+k.slice(1).replace(/-/g," ")), src:"orphan", mods:[], slots:[], st:"", kind:"other"})));
   const g=$("wishGrid");
   if(!all.length && !gone.length){ g.innerHTML=`<p class="note" style="padding:6px 0">${T("wishEmpty", esc(SEM_NOW))}</p>`; return; }
   let html="";
@@ -1177,7 +1295,7 @@ function renderProj(){
     if(p.open===false) return `<article class="card"><div><h3>${esc(p.t)}</h3><div class="meta" style="margin-top:6px">
         <span class="pill p-stop">${T("projRunning")}</span>${p.nr?`<span class="pill p-plain mono">${esc(p.nr)}</span>`:""}</div></div>
       ${(p.when||p.who)?`<div class="meta"><span class="when">${esc(p.when||"")}</span>${p.who?`<span class="who">· ${esc(p.who)}</span>`:""}</div>`:""}
-      ${p.note?`<p class="note">${p.note}</p>`:""}</article>`;
+      ${p.desc?`<p class="note">${p.desc}</p>`:""}</article>`;
     return cardHTML(p,"proj");
   }).join("");
 }
@@ -1204,7 +1322,7 @@ function renderStatic(){
     (TRACKS.length?`<option value="track">${T("gTrack")}</option>`:"")+(Object.keys(MODS).length?`<option value="mod">${T("gMod")}</option>`:"")+
     `<option value="st">${T("gSt")}</option>`+(CAT.some(c=>c.rh||c.rhx)?`<option value="rh">${T("gRh")}</option>`:"");
   [["fStatus","aStatus"],["fMine","aMine"],["fArea","aArea"],["fKind","aKind"],["fGroup","aGroup"],["q","aSearch"]].forEach(([id,k])=>$(id).setAttribute("aria-label",T(k)));
-  $("q").placeholder=T("searchPh"); $("resetF").textContent=T("resetF");
+  $("q").placeholder=T("searchPh"); $("resetF").textContent=T("resetF"); syncFoldAll();
   /* conditions / projects headers */
   if(COND){ $("conditions").hidden=false; $("condTitle").textContent=COND.title||COND_LAB; $("condSub").textContent=COND.sub||T("condSub", COND.required, CU, COND.deadline); }
   if(PROJ){ $("projects").hidden=false; $("projTitle").textContent=PROJ.title||PROJ.label||T("secProjShort"); $("projSub").textContent=PROJ.sub||""; }
@@ -1241,7 +1359,56 @@ function renderToc(){
 function renderAll(){ renderCond(); renderPrior(); renderCourses(); renderFut(); renderWish(); renderProj(); renderTT(); renderProgress(); }
 
 /* ===== interaction ===== */
+function saveFold(){ try{ localStorage.setItem(FOLD_KEY, JSON.stringify(FOLD)); }catch(e){} }
+function syncFoldAll(){ $("foldAll").textContent=T(FOLD.def==="open"?"foldAllClose":"foldAllOpen"); }
+const cardsOf = k => document.querySelectorAll(`.card[data-key="${CSS.escape(k)}"]`);
+function setFold(k, open){
+  const x=new Set(FOLD.x); if(open===(FOLD.def==="open")) x.delete(k); else x.add(k);
+  FOLD={...FOLD, x:[...x]}; saveFold();
+  cardsOf(k).forEach(card=>{ const b=card.querySelector(".cbody"), f=card.querySelector(".fold"); if(b) b.hidden=!open; if(f) f.setAttribute("aria-expanded", String(open)); });
+}
+function jumpTo(k){
+  const sel=`.card[data-key="${CSS.escape(k)}"]`;
+  let el=document.querySelector("#courseGrid "+sel) || [...document.querySelectorAll(sel)].find(x=>x.offsetParent!==null);
+  if(!el && CAT.some(c=>c.key===k)){ Object.assign(F, FDEFAULT); F.q=""; $("q").value=""; syncFilterUI(); renderCourses(); el=document.querySelector("#courseGrid "+sel); }
+  if(!el) return;
+  if(!isOpen(k)) setFold(k, true);
+  /* land below the sticky section nav (and the catalogue toolbar) */
+  const bar=el.closest("#catalog") ? document.querySelector("#catalog .toolbar") : null;
+  window.scrollTo({top: el.getBoundingClientRect().top + window.scrollY - ($("toc").offsetHeight + (bar?bar.offsetHeight:0) + 12)});
+  el.classList.remove("flash"); void el.offsetWidth; el.classList.add("flash");
+  setTimeout(()=>el.classList.remove("flash"), 1500);
+}
+/* own notes: saved while typing, without re-rendering the card that has the focus */
+let noteT=null, notePending=false;
+const noteBusy = () => notePending || !!(document.activeElement && document.activeElement.matches && document.activeElement.matches("textarea[data-act='mynote']"));
+function setNote(k, v, src){
+  const notes={...ST.notes}, c=byKey[k];
+  if(String(v).trim()) notes[k]={n:String(v), t:(c&&c.t)||(notes[k]&&notes[k].t)||(rec(k)&&rec(k).t)||undefined};
+  else delete notes[k];
+  ST={...ST, notes};
+  try{ localStorage.setItem(STORE_KEY, JSON.stringify(ST)); }catch(e){}
+  notePending=true; clearTimeout(noteT); noteT=setTimeout(()=>{ notePending=false; persist(); }, 700);
+  document.querySelectorAll(`textarea[data-act='mynote'][data-key="${CSS.escape(k)}"]`).forEach(x=>{ if(x!==src) x.value=v; });
+}
+document.addEventListener("input", e=>{
+  const ta=e.target.closest("textarea[data-act='mynote']");
+  if(ta) setNote(ta.dataset.key, ta.value, ta);
+});
+$("foldAll").addEventListener("click", ()=>{ FOLD={def:FOLD.def==="open"?"closed":"open", x:[]}; saveFold(); syncFoldAll(); renderAll(); });
 document.addEventListener("click", e=>{
+  const fb=e.target.closest("[data-act='fold']");
+  if(fb){ const k=fb.dataset.key; setFold(k, !isOpen(k)); return; }
+  const jb=e.target.closest("[data-act='jump']");
+  if(jb){ e.preventDefault(); jumpTo(jb.dataset.key); return; }
+  const nb=e.target.closest("[data-act='addnote']");
+  if(nb){
+    const k=nb.dataset.key, sec=nb.closest("section"), sid=sec?sec.id:null;
+    NOTE_OPEN.add(k); if(!isOpen(k)) setFold(k, true); renderAll();
+    const ta=document.querySelector((sid?"#"+sid+" ":"")+`textarea[data-act='mynote'][data-key="${CSS.escape(k)}"]`);
+    if(ta) ta.focus();
+    return;
+  }
   const mp=e.target.closest("[data-act='fmod']");
   if(mp){ const m=mp.dataset.v; F.area=(areaMod()===m)?"all":"m:"+m; syncFilterUI(); renderCourses(); $("catalog").scrollIntoView({block:"start"}); return; }
   const seg=e.target.closest("[data-act='st']");
@@ -1258,6 +1425,7 @@ document.addEventListener("change", e=>{
   const sel=e.target.closest(".fsel[data-f]");
   if(sel){ F[sel.dataset.f]=sel.value; syncFilterUI(); renderCourses(); return; }
   const el=e.target.closest("[data-act]"); if(!el) return;
+  if(el.dataset.act==="mynote"){ clearTimeout(noteT); notePending=false; persist(); return; }
   const act=el.dataset.act, k=el.dataset.key, cur=ST.courses[k]; if(!cur||act==="st") return;
   const r={...cur};
   if(act==="grade"){ const n=parseFloat(String(el.value).replace(",",".")); r.g=isNaN(n)?null:n; }
@@ -1283,19 +1451,22 @@ storeMsg(T("stChecking"));
     const d=s.exists?s.data():null;
     if(first){
       first=false;
-      if(d && d.courses && Object.keys(d.courses).length){ ST={courses:clone(d.courses), seeded:clone({a:d.seeded||[]}).a}; if(seedPrior()) persist(); else { try{ localStorage.setItem(STORE_KEY, JSON.stringify(ST)); }catch(e){} } renderAll(); }
+      if(d && ((d.courses && Object.keys(d.courses).length) || (d.notes && Object.keys(d.notes).length))){ ST={courses:clone(d.courses||{}), seeded:clone({a:d.seeded||[]}).a, notes:clone(d.notes||{})}; if(seedPrior()) persist(); else { try{ localStorage.setItem(STORE_KEY, JSON.stringify(ST)); }catch(e){} } renderAll(); }
       else persist();
       storeMsg(T("stDb")); return;
     }
     if(!d || !d.courses) return;
-    if(JSON.stringify(d.courses)===JSON.stringify(ST.courses)) return;
-    ST={courses:clone(d.courses), seeded:clone({a:d.seeded||ST.seeded}).a};
+    /* while a note is being typed, the local text wins — an echo of an earlier save must not overwrite it */
+    const editing=noteBusy();
+    const sameC=JSON.stringify(d.courses)===JSON.stringify(ST.courses), sameN=editing || JSON.stringify(d.notes||{})===JSON.stringify(ST.notes||{});
+    if(sameC && sameN) return;
+    ST={courses:clone(d.courses), seeded:clone({a:d.seeded||ST.seeded}).a, notes:editing?ST.notes:clone(d.notes||{})};
     try{ localStorage.setItem(STORE_KEY, JSON.stringify(ST)); }catch(e){}
     renderAll();
   }, ()=>storeMsg(T("stDbFail")));
 })();
 $("exportBtn").addEventListener("click", async ()=>{
-  const payload=JSON.stringify({app:"study-planner", version:1, program:CFG.program||"", exported:new Date().toISOString(), courses:ST.courses, seeded:ST.seeded}, null, 2);
+  const payload=JSON.stringify({app:"study-planner", version:1, program:CFG.program||"", exported:new Date().toISOString(), courses:ST.courses, seeded:ST.seeded, notes:ST.notes}, null, 2);
   const name=(slug(CFG.program||"study-planner")||"study-planner")+"-"+new Date().toISOString().slice(0,10)+".json";
   let dl=null;
   try{ dl = (window.claude && window.claude.use) ? await window.claude.use("downloads") : null; }catch(e){ dl=null; }
@@ -1309,7 +1480,7 @@ $("importGo").addEventListener("click", ()=>{
   try{
     const d=JSON.parse($("importText").value);
     if(!d || typeof d!=="object" || !d.courses || typeof d.courses!=="object") throw new Error("invalid");
-    ST={courses:clone(d.courses), seeded:Array.isArray(d.seeded)?d.seeded.slice():PRIOR.map(p=>p.key)};
+    ST={courses:clone(d.courses), seeded:Array.isArray(d.seeded)?d.seeded.slice():PRIOR.map(p=>p.key), notes:(d.notes&&typeof d.notes==="object")?clone(d.notes):{}};
     persist(); renderAll(); storeMsg(T("stImported")); $("importBox").hidden=true; $("importText").value="";
   }catch(e){ storeMsg(T("stBadImport")); }
 });
@@ -1318,7 +1489,7 @@ $("resetBtn").addEventListener("click", ()=>{
   const b=$("resetBtn");
   if(!b.classList.contains("armed")){ b.classList.add("armed"); b.textContent=T("btnResetArm"); clearTimeout(armT); armT=setTimeout(()=>{ b.classList.remove("armed"); b.textContent=T("btnReset"); }, 5000); return; }
   clearTimeout(armT); b.classList.remove("armed"); b.textContent=T("btnReset");
-  ST={courses:{}, seeded:[]}; seedPrior(); persist(); renderAll(); storeMsg(T("stReset"));
+  ST={courses:{}, seeded:[], notes:{}}; seedPrior(); persist(); renderAll(); storeMsg(T("stReset"));
 });
 
 /* ===== boot ===== */

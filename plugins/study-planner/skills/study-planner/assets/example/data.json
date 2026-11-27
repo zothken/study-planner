@@ -56,7 +56,7 @@
    "cond": true,
    "block": "bestanden im SoSe 2026",
    "g": 2.3,
-   "note": "Auflage aus dem Zulassungsbescheid, im Vorsemester bestanden."
+   "hint": "Auflage aus dem Zulassungsbescheid, im Vorsemester bestanden."
   }
  ],
  "conditions": [
@@ -75,7 +75,8 @@
      "e": "12:00"
     }
    ],
-   "note": "<b>Pflicht-Auflage.</b> Lineare Algebra und Analysis im Tempo des Masters. Klausur, keine Vorkenntnisse über das Abitur hinaus."
+   "desc": "Lineare Algebra und Analysis im Tempo des Masters. Klausur.",
+   "hint": "<b>Pflicht-Auflage.</b> Keine Vorkenntnisse über das Abitur hinaus."
   }
  ],
  "courses": [
@@ -101,7 +102,14 @@
      "e": "16:00"
     }
    ],
-   "note": "Pflichtmodul. Regression, Klassifikation, Resampling, Regularisierung. Dein Statistik-Kurs aus dem Vorsemester ist genau der Vorlauf."
+   "desc": "Regression, Klassifikation, Resampling, Regularisierung.",
+   "hint": "Pflichtmodul. Dein Statistik-Kurs aus dem Vorsemester ist genau der Vorlauf.",
+   "rel": [
+    {
+     "key": "prior-intro-statistics",
+     "kind": "prereq"
+    }
+   ]
   },
   {
    "t": "Data Engineering in Python",
@@ -121,7 +129,8 @@
      "e": "10:00"
     }
    ],
-   "note": "Pflichtmodul. pandas, Polars, Datenpipelines, Tests. Für dich mit Python-Erfahrung gut planbar."
+   "desc": "pandas, Polars, Datenpipelines, Tests.",
+   "hint": "Pflichtmodul. Für dich mit Python-Erfahrung gut planbar."
   },
   {
    "t": "Introduction to Deep Learning",
@@ -145,7 +154,8 @@
      "e": "12:00"
     }
    ],
-   "note": "In zwei Modulen anrechenbar. <b>Der stärkste Einstieg in den ML-Schwerpunkt.</b> Kollidiert mit Graph Databases (Di 12–14)."
+   "desc": "Neuronale Netze von Grund auf: Backpropagation, CNNs, RNNs, Transformer. Übungen in PyTorch, Klausur am Ende.",
+   "hint": "In zwei Modulen anrechenbar. <b>Der stärkste Einstieg in den ML-Schwerpunkt.</b>"
   },
   {
    "t": "Probabilistic Machine Learning",
@@ -164,7 +174,15 @@
      "e": "12:00"
     }
    ],
-   "note": "Bayes'sche Modelle, Variational Inference, Gauß-Prozesse. <b>Setzt sichere Wahrscheinlichkeitsrechnung voraus</b> — mit Mathematik für Data Science parallel machbar, aber ein Arbeitskurs."
+   "desc": "Bayes'sche Modelle, Variational Inference, Gauß-Prozesse.",
+   "hint": "<b>Setzt sichere Wahrscheinlichkeitsrechnung voraus</b> — ein Arbeitskurs.",
+   "rel": [
+    {
+     "t": "Mathematik für Data Science",
+     "kind": "prereq",
+     "txt": "parallel machbar"
+    }
+   ]
   },
   {
    "t": "Causal Inference in Practice",
@@ -184,7 +202,7 @@
      "e": "16:00"
     }
    ],
-   "note": "Potential Outcomes, DAGs, Difference-in-Differences an echten Datensätzen. Referat plus Hausarbeit."
+   "desc": "Potential Outcomes, DAGs, Difference-in-Differences an echten Datensätzen. Referat plus Hausarbeit."
   },
   {
    "t": "Graph Databases",
@@ -203,7 +221,8 @@
      "e": "14:00"
     }
    ],
-   "note": "Property Graphs, Cypher, Graph-Algorithmen. Keine Voraussetzungen außer SQL."
+   "desc": "Property Graphs, Cypher, Graph-Algorithmen.",
+   "hint": "Keine Voraussetzungen außer SQL."
   },
   {
    "t": "Distributed Data Processing",
@@ -227,7 +246,8 @@
      "e": "14:00"
     }
    ],
-   "note": "Spark, Streaming, verteilte Speicher. <b>Linux-Kommandozeile wird vorausgesetzt</b> — kostet ohne Vorerfahrung ein paar Abende."
+   "desc": "Spark, Streaming, verteilte Speicher.",
+   "hint": "<b>Linux-Kommandozeile wird vorausgesetzt</b> — kostet ohne Vorerfahrung ein paar Abende."
   },
   {
    "t": "Database Internals",
@@ -240,7 +260,8 @@
    "rh": "first",
    "hs": "WS26",
    "block": "15.–19.02.2027",
-   "note": "<b>„Voraussetzung: Datenbanksysteme II“</b> — die fehlt dir. Frühestens nach einem entsprechenden Kurs."
+   "desc": "Speicherstrukturen, Indexe, Anfrageoptimierung und Transaktionen im Datenbankkern.",
+   "hint": "<b>„Voraussetzung: Datenbanksysteme II“</b> — die fehlt dir. Frühestens nach einem entsprechenden Kurs."
   },
   {
    "t": "Visual Analytics Lab",
@@ -258,7 +279,8 @@
      "e": "15:00"
     }
    ],
-   "note": "Interaktive Dashboards mit Vega-Lite und D3, Teamprojekt mit Nutzerstudie. <b>In Stud.IP ohne Master-Modul</b> — Anrechnung vorher klären (siehe „Zu klären“).",
+   "desc": "Interaktive Dashboards mit Vega-Lite und D3, Teamprojekt mit Nutzerstudie.",
+   "hint": "<b>In Stud.IP ohne Master-Modul</b> — Anrechnung vorher klären (siehe „Zu klären“).",
    "area": "MW"
   },
   {
@@ -279,7 +301,14 @@
      "e": "12:00"
     }
    ],
-   "note": "Interpretierbarkeit, Nutzerstudien, Fairness-Metriken. Liegt zeitgleich mit Introduction to Deep Learning (Do 10–12)."
+   "desc": "Interpretierbarkeit, Nutzerstudien, Fairness-Metriken.",
+   "rel": [
+    {
+     "t": "Fair Credit Scoring — Part I",
+     "kind": "content",
+     "txt": "dieselben Fairness-Metriken, ergänzt sich gut"
+    }
+   ]
   },
   {
    "t": "Data Ethics",
@@ -300,7 +329,8 @@
      "e": "18:00"
     }
    ],
-   "note": "Einmalig im Winter statt im Sommer. Essay als Leistung."
+   "desc": "Ethische Fragen der Datennutzung. Essay als Leistung.",
+   "hint": "Einmalig im Winter statt im Sommer."
   },
   {
    "t": "Datenschutzrecht für Informatiker:innen",
@@ -320,7 +350,15 @@
      "e": "18:00"
     }
    ],
-   "note": "Läuft unter Rechtswissenschaft, nur über das Modulverzeichnis gefunden. DSGVO, Einwilligung, Anonymisierung. Deutschsprachig."
+   "desc": "DSGVO, Einwilligung, Anonymisierung. Deutschsprachig.",
+   "hint": "Läuft unter Rechtswissenschaft, nur über das Modulverzeichnis gefunden.",
+   "rel": [
+    {
+     "t": "Data Ethics",
+     "kind": "content",
+     "txt": "Einwilligung und Anonymisierung kommen in beiden vor"
+    }
+   ]
   },
   {
    "t": "Algorithmen und Datenstrukturen",
@@ -345,7 +383,8 @@
      "e": "10:00"
     }
    ],
-   "note": "<b>Bachelor-Modul, auf deinen Wunsch einzeln nachgetragen.</b> Im Freien Wahlbereich anrechenbar."
+   "desc": "Klassische Datenstrukturen, Sortier- und Graphalgorithmen, Laufzeitanalyse.",
+   "hint": "<b>Bachelor-Modul, auf deinen Wunsch einzeln nachgetragen.</b> Im Freien Wahlbereich anrechenbar."
   }
  ],
  "future": [
@@ -356,7 +395,15 @@
    "mod": "DS-WP-ML1",
    "rh": "each-ss",
    "hs": "SS24,SS25,SS26",
-   "note": "Verlässlich jedes Sommersemester. Sinnvoll nach Introduction to Deep Learning."
+   "desc": "Markov-Entscheidungsprozesse, Q-Learning, Policy Gradients.",
+   "hint": "Verlässlich jedes Sommersemester.",
+   "rel": [
+    {
+     "t": "Introduction to Deep Learning",
+     "kind": "prereq",
+     "txt": "sinnvoll vorher"
+    }
+   ]
   },
   {
    "t": "Stream Processing Systems",
@@ -366,7 +413,14 @@
    "rhx": "yearly",
    "rhxq": "Planned as a yearly summer course.",
    "hs": "SS26",
-   "note": "Ergänzt Distributed Data Processing."
+   "desc": "Event-Streams, Zeitfenster, Exactly-once-Verarbeitung.",
+   "rel": [
+    {
+     "t": "Distributed Data Processing",
+     "kind": "other",
+     "txt": "ergänzt sich"
+    }
+   ]
   }
  ],
  "projects": [
@@ -384,7 +438,8 @@
      "e": "12:00"
     }
    ],
-   "note": "Bias-Analyse eines echten Kreditdatensatzes mit einer Partnerbank. Passt zum Schwerpunkt Human-Centred."
+   "desc": "Bias-Analyse eines echten Kreditdatensatzes mit einer Partnerbank.",
+   "hint": "Passt zum Schwerpunkt Human-Centred."
   },
   {
    "t": "Energy Forecasting — Part I",
@@ -400,14 +455,14 @@
      "e": "16:00"
     }
    ],
-   "note": "Lastprognosen für ein Stadtwerk, Zeitreihenmodelle bis Transformer."
+   "desc": "Lastprognosen für ein Stadtwerk, Zeitreihenmodelle bis Transformer."
   },
   {
    "t": "Laufende Projekte (Part II)",
    "open": false,
    "who": "diverse",
    "when": "nicht einsteigbar",
-   "note": "Urban Mobility · Clinical NLP. Beide bereits im zweiten Semester."
+   "desc": "Urban Mobility · Clinical NLP. Beide bereits im zweiten Semester."
   }
  ]
 }

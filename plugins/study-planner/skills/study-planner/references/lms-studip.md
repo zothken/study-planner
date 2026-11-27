@@ -63,12 +63,12 @@ Do this on the first import and store every id in `config.import` — later sess
    `SP.moduleCourses(code, sem)`. Courses that other faculties own (computer science, psychology, law,
    biology) are linked there but missing from the programme tree. In Osnabrück this found 3 courses on
    07.09.2026 and 3 more on 24.09.2026 that the tree did not show. Merge by course id; note for each course
-   where it was found.
+   where it was found (it goes into the `hint`).
 3. `SP.details(id)` for every new or changed course (in batches). Extract: number, ECTS, SWS, language,
    lecturers, weekly slots (or block dates), module assignments, description, prerequisites, access
    restrictions, and the frequency answer.
-4. Map each course to the data model (section 7). Write the note for *this* student (see
-   `references/regulations.md`, "Writing the card note").
+4. Map each course to the data model (section 7). Write `desc`, `hint` and `rel` for *this* student (see
+   `references/regulations.md`, "Writing the card text").
 5. Diff against the current `data.courses`:
    - new → add with `"neu":"<today>"`;
    - gone → remove only if Stud.IP really no longer lists it this term; if the student had a status on it,
@@ -83,7 +83,7 @@ When the student wants one course from, e.g., the Bachelor programme: do **not**
 catalogue. Set the semester, load the other node with `SP.courses(bachelorNode, sem)`, find the course by
 title regex, `SP.details(id)`, count its history on that node, and add it with `"ext":"bsc"`, an `area`
 where it can count (usually the free elective area — check the handbook wording), and its foreign module
-code added to `config.modules`/`moduleOrder` (otherwise it lands under "Other"). Say in the note whether
+code added to `config.modules`/`moduleOrder` (otherwise it lands under "Other"). Say in the `hint` whether
 recognition is confirmed or still open, and add a "Zu klären" item if open.
 
 ## 5. Enrolled courses
